@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { defaultArticles, defaultProfile } from '../data/mockData';
+import { defaultProfile } from '../data/mockData';
+import { fetchArticles, createArticle, updateArticleApi, deleteArticleApi } from '../utils/api';
 
 const BlogContext = createContext();
 
@@ -10,14 +11,12 @@ export const BlogProvider = ({ children }) => {
   const [profile, setProfile] = useState({});
 
   useEffect(() => {
-    // Hydrate state from localStorage or use defaults
-    const storedArticles = localStorage.getItem('blog_articles');
-    if (storedArticles) {
-      setArticles(JSON.parse(storedArticles));
-    } else {
-      setArticles(defaultArticles);
-      localStorage.setItem('blog_articles', JSON.stringify(defaultArticles));
-    }
+    // Fetch real articles from backend API
+    const loadArticles = async () => {
+      const data = await fetchArticles();
+      setArticles(data);
+    };
+    loadArticles();
 
     const storedProfile = localStorage.getItem('blog_profile');
     if (storedProfile) {
@@ -28,22 +27,41 @@ export const BlogProvider = ({ children }) => {
     }
   }, []);
 
-  const addArticle = (newArticle) => {
-    const updated = [newArticle, ...articles];
-    setArticles(updated);
-    localStorage.setItem('blog_articles', JSON.stringify(updated));
+  const addArticle = async (newArticle) => {
+    try {
+      const res = await createArticle(newArticle);
+      if(res.code === 200) {
+        // Re-fetch to ensure true synchronization with Database
+        const data = await fetchArticles(); 
+        setArticles(data);
+      }
+    } catch (e) {
+      console.error(e);
+    }
   };
 
-  const updateArticle = (updatedArticle) => {
-    const updated = articles.map(a => a.id === updatedArticle.id ? updatedArticle : a);
-    setArticles(updated);
-    localStorage.setItem('blog_articles', JSON.stringify(updated));
+  const updateArticle = async (updatedArticle) => {
+    try {
+      const res = await updateArticleApi(updatedArticle);
+      if(res.code === 200) {
+        const data = await fetchArticles();
+        setArticles(data);
+      }
+    } catch (e) {
+      console.error(e);
+    }
   };
 
-  const deleteArticle = (id) => {
-    const updated = articles.filter(a => a.id !== id);
-    setArticles(updated);
-    localStorage.setItem('blog_articles', JSON.stringify(updated));
+  const deleteArticle = async (id) => {
+    try {
+      const res = await deleteArticleApi(id);
+      if(res.code === 200) {
+        const data = await fetchArticles();
+        setArticles(data);
+      }
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const updateProfile = (updatedProfile) => {
