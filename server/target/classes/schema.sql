@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS articles (
     author_id BIGINT NOT NULL COMMENT '作者ID',
     category_id BIGINT NOT NULL COMMENT '分类ID',
     title VARCHAR(255) NOT NULL COMMENT '文章标题',
-    content LONGTEXT NOT NULL COMMENT '文章正文',
+    content LONGTEXT NOT NULL COMMENT '文章正文，MD格式的文本',
     status TINYINT NOT NULL DEFAULT '0' COMMENT '状态：0-草稿，1-已发布',
     views INT NOT NULL DEFAULT '0' COMMENT '阅读量',
     published_at DATETIME COMMENT '发布时间',
