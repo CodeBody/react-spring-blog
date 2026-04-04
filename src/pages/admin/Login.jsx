@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, ArrowRight, ShieldCheck, User } from 'lucide-react';
+import { Lock, ArrowRight, ShieldCheck, User, X } from 'lucide-react';
 
 export default function Login() {
   const [username, setUsername] = useState('');

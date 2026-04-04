@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useBlog } from '../../context/BlogContext';
 import { motion } from 'framer-motion';
 import { 
@@ -27,6 +27,11 @@ import {
 
 export default function Dashboard() {
   const { articles, categories } = useBlog();
+  const [isMounted, setIsMounted] = React.useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Stats calculation
   const totalViews = articles.reduce((sum, article) => sum + (article.views || 0), 0);
@@ -113,9 +118,10 @@ export default function Dashboard() {
               <span className="text-[0.6rem] font-black uppercase tracking-wider">实时更新</span>
             </div>
           </div>
-          <div className="h-[320px] w-full pr-4">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={trendData}>
+          <div className="h-[320px] w-full pr-4" style={{ minHeight: '320px', minWidth: '100%' }}>
+            {isMounted && (
+              <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0} debounce={1}>
+                <AreaChart data={trendData}>
                 <defs>
                    <linearGradient id="colorViews" x1="0" y1="0" x2="0" y2="1">
                      <stop offset="5%" stopColor="#6366F1" stopOpacity={0.15}/>
@@ -152,6 +158,7 @@ export default function Dashboard() {
                 />
               </AreaChart>
             </ResponsiveContainer>
+            )}
           </div>
         </motion.div>
 
@@ -169,9 +176,9 @@ export default function Dashboard() {
             </div>
             <Layers size={20} className="text-muted-foreground opacity-30" />
           </div>
-          <div className="h-[300px] w-full flex flex-col items-center justify-center">
-            {categoryData.length > 0 ? (
-              <ResponsiveContainer width="100%" height="80%">
+          <div className="h-[300px] w-full flex flex-col items-center justify-center" style={{ minHeight: '300px', minWidth: '100%' }}>
+            {isMounted && categoryData.length > 0 ? (
+              <ResponsiveContainer width="100%" height="80%" minWidth={0} minHeight={0} debounce={1}>
                 <PieChart>
                   <Pie
                     data={categoryData}

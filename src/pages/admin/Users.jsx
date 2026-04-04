@@ -8,12 +8,12 @@ import {
   Users as UsersIcon, 
   ShieldCheck, 
   Mail, 
-  Github,
   Check,
   X,
   Search,
   MoreHorizontal
 } from 'lucide-react';
+import { FaGithub } from 'react-icons/fa6';
 
 export default function Users() {
   const { users, addUser, updateUser, deleteUser } = useBlog();
@@ -137,20 +137,22 @@ export default function Users() {
 
       {/* User Directory */}
       <div className="space-y-8">
-        <div className="glass-card px-8 py-5 rounded-[2rem] bg-muted/10 flex items-center justify-between shadow-sm">
-           <div className="relative group max-w-sm w-full">
-              <Search className="absolute left-0 top-1/2 -translate-y-1/2 text-muted-foreground/30 w-4 h-4 group-focus-within:text-primary transition-colors" />
-              <input
-                placeholder="搜索用户标识或邮箱地址..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full bg-transparent pl-8 pr-4 py-2 text-xs font-bold tracking-wide focus:outline-none border-b border-transparent focus:border-primary/50 transition-all placeholder:text-muted-foreground/30"
-              />
-            </div>
-            <div className="text-[0.6rem] font-black tracking-[0.2em] opacity-30 flex items-center gap-2 uppercase">
-              <UsersIcon size={14} className="text-primary/50" /> {users.length} Active System Accounts
-            </div>
+      {/* Search & Toolbar */}
+      <div className="flex flex-col md:flex-row items-center justify-between gap-6 px-2">
+        <div className="relative group flex-1 max-w-sm w-full">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/30 w-4 h-4 group-focus-within:text-primary transition-colors" />
+          <input
+            placeholder="搜索用户标识或邮箱地址..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full bg-white/5 border border-border/20 rounded-2xl pl-12 pr-4 py-3 text-sm font-bold tracking-wide focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary/40 transition-all placeholder:text-muted-foreground/30"
+          />
         </div>
+        <div className="flex items-center gap-3 px-5 py-2.5 bg-muted/5 rounded-2xl border border-border/30 backdrop-blur-sm">
+           <UsersIcon size={14} className="text-primary/50" />
+           <span className="text-[0.65rem] font-black uppercase tracking-widest opacity-40">{users.length} Active System Accounts</span>
+        </div>
+      </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-12">
           {filtered.map((user, idx) => (
@@ -160,7 +162,7 @@ export default function Users() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.1 }}
-              className="glass-card p-10 rounded-[3rem] group relative overflow-hidden hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-700"
+              className="glass-card p-10 rounded-[2.5rem] border border-border/40 hover:border-primary/40 hover:bg-primary/[0.02] shadow-premium hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 group relative overflow-hidden"
             >
               <div className="absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-all pointer-events-none group-hover:pointer-events-auto z-20">
                 <div className="flex gap-2">
@@ -201,8 +203,8 @@ export default function Users() {
 
               <div className="mt-8 flex items-center justify-between relative z-10">
                 <div className="flex gap-4">
-                   <Github size={16} className="text-muted-foreground/20 hover:text-foreground cursor-pointer transition-all hover:scale-110" />
-                   <MoreHorizontal size={16} className="text-muted-foreground/20 hover:text-foreground cursor-pointer transition-all hover:scale-110" />
+                  <FaGithub size={16} className="text-muted-foreground/20 hover:text-foreground cursor-pointer transition-all hover:scale-110" />
+                  <MoreHorizontal size={16} className="text-muted-foreground/20 hover:text-foreground cursor-pointer transition-all hover:scale-110" />
                 </div>
                 <div className="text-[0.55rem] font-black text-muted-foreground/10 uppercase tracking-[0.3em] italic">ROOT_ID_{user.id}</div>
               </div>

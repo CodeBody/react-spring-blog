@@ -1,3 +1,17 @@
+import React, { useState, useEffect } from 'react';
+import { useBlog } from '../../context/BlogContext';
+import { motion } from 'framer-motion';
+import { 
+  Save, 
+  Check, 
+  Camera, 
+  AtSign, 
+  User, 
+  Globe, 
+  Link as LinkIcon 
+} from 'lucide-react';
+import { FaGithub } from 'react-icons/fa6';
+
 export default function Settings() {
   const { profile, updateProfile } = useBlog();
   const [formData, setFormData] = useState({
@@ -173,7 +187,7 @@ export default function Settings() {
 
             <div className="space-y-8 px-2">
               {[
-                { name: 'github', label: 'GitHub Ecosystem', placeholder: 'GITHUB.COM/USERNAME', icon: <Github size={18} /> },
+                { name: 'github', label: 'GitHub Ecosystem', placeholder: 'GITHUB.COM/USERNAME', icon: <FaGithub size={18} /> },
                 { name: 'twitter', label: 'Twitter Node', placeholder: 'TWITTER.COM/USERNAME', icon: <AtSign size={18} /> },
                 { name: 'linkedin', label: 'LinkedIn Linkage', placeholder: 'LINKEDIN.COM/IN/USERNAME', icon: <LinkIcon size={18} /> }
               ].map((social) => (

@@ -118,20 +118,22 @@ export default function Categories() {
 
       {/* Search & List */}
       <div className="space-y-8">
-        <div className="flex items-center justify-between gap-4 glass-card px-8 py-4 rounded-2xl bg-muted/10">
-           <div className="relative group flex-1 max-w-md">
-              <Search className="absolute left-0 top-1/2 -translate-y-1/2 text-muted-foreground/30 w-4 h-4 group-focus-within:text-primary transition-colors" />
-              <input
-                placeholder="搜索全部分类..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full bg-transparent pl-8 pr-4 py-2 text-xs font-bold tracking-wide focus:outline-none border-b border-transparent focus:border-primary/50 transition-all placeholder:text-muted-foreground/30"
-              />
-            </div>
-            <div className="text-[0.6rem] font-black uppercase tracking-widest opacity-30 flex items-center gap-2">
-              <Layers size={14} /> {categories.length} 项分类已在库中
-            </div>
+      {/* Search & Toolbar */}
+      <div className="flex flex-col md:flex-row items-center justify-between gap-6 px-2">
+        <div className="relative group flex-1 max-w-sm w-full">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/30 w-4 h-4 group-focus-within:text-primary transition-colors" />
+          <input
+            placeholder="搜索全部分类..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full bg-white/5 border border-border/20 rounded-2xl pl-12 pr-4 py-3 text-sm font-bold tracking-wide focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary/40 transition-all placeholder:text-muted-foreground/30"
+          />
         </div>
+        <div className="flex items-center gap-3 px-5 py-2.5 bg-muted/5 rounded-2xl border border-border/30 backdrop-blur-sm">
+           <Layers size={14} className="text-primary/50" />
+           <span className="text-[0.65rem] font-black uppercase tracking-widest opacity-40">{categories.length} 分类记录</span>
+        </div>
+      </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-12">
           {filtered.map((cat, idx) => {
@@ -143,7 +145,7 @@ export default function Categories() {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: idx * 0.05 }}
-                className="glass-card p-10 rounded-[2.5rem] group hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 relative overflow-hidden"
+                className="glass-card p-10 rounded-[2.5rem] border border-border/40 hover:border-primary/40 hover:bg-primary/[0.02] shadow-premium hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 group relative overflow-hidden"
               >
                 <div className="absolute -right-10 -bottom-10 w-32 h-32 bg-primary/5 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity" />
                 

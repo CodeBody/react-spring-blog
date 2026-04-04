@@ -109,50 +109,103 @@ export default function Tags() {
         )}
       </AnimatePresence>
 
-      <div className="glass-card rounded-[2.5rem] overflow-hidden shadow-premium">
-        <div className="p-8 border-b border-border/30 flex items-center justify-between bg-muted/10">
-           <div className="relative group flex-1 max-w-sm">
-              <Search className="absolute left-0 top-1/2 -translate-y-1/2 text-muted-foreground/30 w-4 h-4 group-focus-within:text-primary transition-colors" />
-              <input
-                placeholder="搜索全局标签..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full bg-transparent pl-8 pr-4 py-2 text-xs font-bold tracking-wide focus:outline-none border-b border-transparent focus:border-primary/50 transition-all placeholder:text-muted-foreground/30"
-              />
-            </div>
-            <div className="flex items-center gap-3 text-[0.65rem] font-black uppercase tracking-[0.1em] opacity-30">
-               <Hash size={14} className="text-primary/50" /> {tags.length} 标签库记录
-            </div>
+      {/* Search & Toolbar */}
+      <div className="flex flex-col md:flex-row items-center justify-between gap-6 px-2">
+        <div className="relative group flex-1 max-w-sm w-full">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/30 w-4 h-4 group-focus-within:text-primary transition-colors" />
+          <input
+            placeholder="搜索全局标签..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full bg-white/5 border border-border/20 rounded-2xl pl-12 pr-4 py-3 text-sm font-bold tracking-wide focus:outline-none focus:ring-2 focus:ring-primary/10 focus:border-primary/40 transition-all placeholder:text-muted-foreground/30"
+          />
         </div>
+        <div className="flex items-center gap-3 px-5 py-2.5 bg-muted/5 rounded-2xl border border-border/30 backdrop-blur-sm">
+           <Hash size={14} className="text-primary/50" />
+           <span className="text-[0.65rem] font-black uppercase tracking-widest opacity-40">{tags.length} 标签库记录</span>
+        </div>
+      </div>
 
-        <div className="p-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+      {/* Tags Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 min-h-[300px]">
+        <AnimatePresence mode="popLayout">
           {filtered.length > 0 ? filtered.map((tag, idx) => (
             <motion.div 
               key={tag.id}
-              initial={{ opacity: 0, scale: 0.95 }}
+              layout
+              initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: idx * 0.02 }}
-              className="p-5 rounded-2xl border border-border/40 hover:border-primary/30 hover:bg-primary/[0.02] hover:shadow-lg transition-all duration-300 group flex items-center justify-between relative overflow-hidden"
+              exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
+              transition={{ 
+                type: "spring",
+                stiffness: 300,
+                damping: 30,
+                delay: idx * 0.01 
+              }}
+              className="glass-card p-6 rounded-[2.5rem] border border-border/40 hover:border-primary/40 hover:bg-primary/[0.03] shadow-premium hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 group flex flex-col justify-between relative overflow-hidden"
             >
-              <div className="absolute -right-4 -bottom-4 w-12 h-12 bg-primary/5 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="flex-1 overflow-hidden relative z-10">
-                <span className="text-[0.7rem] font-black uppercase tracking-widest truncate block group-hover:text-primary transition-colors"># {tag.name}</span>
-                <span className="text-[0.55rem] font-black text-muted-foreground/30 uppercase tracking-tighter mt-0.5 block italic">UID: {tag.id}</span>
+              <div className="absolute -right-8 -top-8 w-24 h-24 bg-primary/5 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-500 shadow-lg shadow-primary/5">
+                    <TagIcon size={20} strokeWidth={2.5} />
+                  </div>
+                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0">
+                     <button 
+                      onClick={() => handleEdit(tag)} 
+                      className="w-9 h-9 rounded-xl flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all"
+                      title="编辑标签"
+                    >
+                      <Edit3 size={16} strokeWidth={2.5} />
+                    </button>
+                     <button 
+                      onClick={() => handleDelete(tag.id)} 
+                      className="w-9 h-9 rounded-xl flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"
+                      title="删除标签"
+                    >
+                      <Trash2 size={16} strokeWidth={2.5} />
+                    </button>
+                  </div>
+                </div>
+                
+                <h3 className="text-xl font-display font-black tracking-tight text-foreground/90 group-hover:text-primary transition-colors duration-300 truncate">
+                  {tag.name}
+                </h3>
+                <div className="flex items-center gap-2 mt-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary/40" />
+                  <span className="text-[0.6rem] font-black text-muted-foreground/30 uppercase tracking-widest">
+                    ID: {tag.id}
+                  </span>
+                </div>
               </div>
-              <div className="flex gap-1 relative z-10">
-                 <button onClick={() => handleEdit(tag)} className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-primary hover:bg-primary/10 transition-all"><Edit3 size={12} /></button>
-                 <button onClick={() => handleDelete(tag.id)} className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-destructive hover:bg-destructive/10 transition-all"><Trash2 size={12} /></button>
+
+              <div className="mt-10 pt-5 border-t border-border/30 relative z-10 flex items-center justify-between">
+                <div className="flex flex-col">
+                  <span className="text-[0.55rem] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Articles</span>
+                  <span className="text-sm font-display font-black text-foreground/60">0</span>
+                </div>
+                <div className="px-3 py-1 rounded-full bg-muted/50 text-[0.55rem] font-black text-muted-foreground/60 uppercase tracking-tighter ring-1 ring-border/50">
+                  Global Tag
+                </div>
               </div>
             </motion.div>
           )) : (
-            <div className="col-span-full py-20 text-center opacity-20 flex flex-col items-center justify-center gap-4">
-               <div className="w-20 h-20 rounded-[2rem] bg-muted/50 flex items-center justify-center mb-2">
-                 <TagIcon size={40} />
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="col-span-full py-32 text-center opacity-40 flex flex-col items-center justify-center gap-8"
+            >
+               <div className="w-28 h-28 rounded-[3rem] bg-muted/20 flex items-center justify-center relative shadow-inner">
+                 <TagIcon size={48} className="relative z-10 text-muted-foreground/30" />
                </div>
-               <p className="text-xs font-black uppercase tracking-[0.3em]">未发现匹配标签</p>
-            </div>
+               <div className="space-y-2">
+                 <p className="text-lg font-black uppercase tracking-[0.5em] text-muted-foreground/60">未发现标签</p>
+                 <p className="text-xs font-bold opacity-40 tracking-wider">尝试更换搜索关键词或新增一个标签</p>
+               </div>
+            </motion.div>
           )}
-        </div>
+        </AnimatePresence>
       </div>
 
       <motion.div 

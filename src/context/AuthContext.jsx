@@ -6,14 +6,9 @@ const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  useEffect(() => {
-    const savedAuth = localStorage.getItem('isBlogAdmin');
-    if (savedAuth === 'true') {
-      setIsAuthenticated(true);
-    }
-  }, []);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return localStorage.getItem('isBlogAdmin') === 'true';
+  });
 
   const login = async (username, password) => {
     try {
