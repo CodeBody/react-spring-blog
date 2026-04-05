@@ -1,8 +1,35 @@
+const getAuthHeader = () => {
+  const token = localStorage.getItem('blog_token');
+  return token ? { 'Authorization': `Bearer ${token}` } : {};
+};
+
+const fetchWithAuth = async (url, options = {}) => {
+  const headers = {
+    ...options.headers,
+    ...getAuthHeader(),
+  };
+  const response = await fetch(url, { ...options, headers });
+  
+  if (response.status === 401 || response.status === 403) {
+    // 只有请求管理端接口失败时才强制跳转登录页
+    if (url.includes('/api/admin/')) {
+      console.warn("认证失效或权限不足，跳转登录页...");
+      localStorage.removeItem('blog_token');
+      if (window.location.pathname !== '/admin/login') {
+        window.location.href = '/admin/login';
+      }
+      return new Promise(() => {});
+    }
+  }
+  
+  return response;
+};
+
 export const fetchAdminArticles = async (page = 1, size = 50, categoryId = null) => { 
   try { 
     let url = `/api/admin/articles?page=${page}&size=${size}`; 
     if (categoryId) url += `&categoryId=${categoryId}`; 
-    const res = await fetch(url); 
+    const res = await fetchWithAuth(url); 
     const data = await res.json(); 
     if (data.code === 200) { 
       return data.data.records.map(adaptArticle); 
@@ -30,7 +57,7 @@ export const fetchArticles = async (page = 1, size = 50, categoryId = null) => {
 
 export const fetchAdminArticleById = async (id) => {
   try {
-    const res = await fetch(`/api/admin/articles/${id}`);
+    const res = await fetchWithAuth(`/api/admin/articles/${id}`);
     const data = await res.json();
     if (data.code === 200) {
       return adaptArticle(data.data);
@@ -56,7 +83,7 @@ export const fetchArticleById = async (id) => {
 
 export const fetchCategories = async () => {
   try {
-    const res = await fetch('/api/admin/categories');
+    const res = await fetch('/api/categories');
     const data = await res.json();
     if (data.code === 200) {
       return data.data;
@@ -68,7 +95,7 @@ export const fetchCategories = async () => {
 };
 
 export const createCategory = async (category) => {
-  const res = await fetch('/api/admin/categories', {
+  const res = await fetchWithAuth('/api/admin/categories', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(category)
@@ -77,7 +104,7 @@ export const createCategory = async (category) => {
 };
 
 export const updateCategory = async (category) => {
-  const res = await fetch(`/api/admin/categories/${category.id}`, {
+  const res = await fetchWithAuth(`/api/admin/categories/${category.id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(category)
@@ -86,7 +113,7 @@ export const updateCategory = async (category) => {
 };
 
 export const deleteCategory = async (id) => {
-  const res = await fetch(`/api/admin/categories/${id}`, {
+  const res = await fetchWithAuth(`/api/admin/categories/${id}`, {
     method: 'DELETE'
   });
   return res.json();
@@ -94,7 +121,7 @@ export const deleteCategory = async (id) => {
 
 export const fetchTags = async () => {
   try {
-    const res = await fetch('/api/admin/tags');
+    const res = await fetch('/api/tags');
     const data = await res.json();
     if (data.code === 200) {
       return data.data;
@@ -106,7 +133,7 @@ export const fetchTags = async () => {
 };
 
 export const createTag = async (tag) => {
-  const res = await fetch('/api/admin/tags', {
+  const res = await fetchWithAuth('/api/admin/tags', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(tag)
@@ -115,7 +142,7 @@ export const createTag = async (tag) => {
 };
 
 export const updateTag = async (tag) => {
-  const res = await fetch(`/api/admin/tags/${tag.id}`, {
+  const res = await fetchWithAuth(`/api/admin/tags/${tag.id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(tag)
@@ -124,7 +151,7 @@ export const updateTag = async (tag) => {
 };
 
 export const deleteTag = async (id) => {
-  const res = await fetch(`/api/admin/tags/${id}`, {
+  const res = await fetchWithAuth(`/api/admin/tags/${id}`, {
     method: 'DELETE'
   });
   return res.json();
@@ -132,7 +159,7 @@ export const deleteTag = async (id) => {
 
 export const fetchAllUsers = async () => {
   try {
-    const res = await fetch('/api/admin/users');
+    const res = await fetchWithAuth('/api/admin/users');
     const data = await res.json();
     if (data.code === 200) {
       return data.data;
@@ -144,7 +171,7 @@ export const fetchAllUsers = async () => {
 };
 
 export const createUser = async (user) => {
-  const res = await fetch('/api/admin/users', {
+  const res = await fetchWithAuth('/api/admin/users', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(user)
@@ -153,7 +180,7 @@ export const createUser = async (user) => {
 };
 
 export const updateUser = async (user) => {
-  const res = await fetch(`/api/admin/users/${user.id}`, {
+  const res = await fetchWithAuth(`/api/admin/users/${user.id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(user)
@@ -162,7 +189,7 @@ export const updateUser = async (user) => {
 };
 
 export const deleteUser = async (id) => {
-  const res = await fetch(`/api/admin/users/${id}`, {
+  const res = await fetchWithAuth(`/api/admin/users/${id}`, {
     method: 'DELETE'
   });
   return res.json();
@@ -177,7 +204,7 @@ export const createArticle = async (article) => {
     categoryId: article.categoryId || null,
     tagIds: article.tagIds || []
   };
-  const res = await fetch('/api/admin/articles', {
+  const res = await fetchWithAuth('/api/admin/articles', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
@@ -193,7 +220,7 @@ export const updateArticleApi = async (article) => {
     categoryId: article.categoryId || null,
     tagIds: article.tagIds || []
   };
-  const res = await fetch(`/api/admin/articles/${article.id}`, {
+  const res = await fetchWithAuth(`/api/admin/articles/${article.id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
@@ -202,7 +229,7 @@ export const updateArticleApi = async (article) => {
 };
 
 export const deleteArticleApi = async (id) => {
-  const res = await fetch(`/api/admin/articles/${id}`, {
+  const res = await fetchWithAuth(`/api/admin/articles/${id}`, {
     method: 'DELETE'
   });
   return res.json();
@@ -210,7 +237,7 @@ export const deleteArticleApi = async (id) => {
 
 export const fetchDashboardStats = async () => {
   try {
-    const res = await fetch('/api/admin/dashboard/stats');
+    const res = await fetchWithAuth('/api/admin/dashboard/stats');
     const data = await res.json();
     if (data.code === 200) {
       return data.data;
@@ -241,7 +268,11 @@ export const loginApi = async (username, password) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password })
     });
-    return res.json();
+    const data = await res.json();
+    if (data.code === 200 && data.data.token) {
+      localStorage.setItem('blog_token', data.data.token);
+    }
+    return data;
   } catch (error) {
     console.error('Login API error:', error);
     return { code: 500, message: 'Server error' };

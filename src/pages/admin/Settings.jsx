@@ -74,14 +74,14 @@ export default function Settings() {
       >
         <div>
           <h1 className="text-4xl font-display font-black tracking-tight mb-2 text-gradient">系统偏好</h1>
-          <p className="text-muted-foreground text-xs font-bold uppercase tracking-[0.2em] opacity-40">Identity & Digital Presence</p>
+          <p className="text-muted-foreground text-xs font-bold uppercase tracking-[0.2em] opacity-40">个人身份与数字展示</p>
         </div>
         <button 
           onClick={handleSubmit} 
           className={`px-8 py-3 rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl transition-all flex items-center gap-2 ${isSaved ? 'bg-emerald-500 text-white shadow-emerald-500/20' : 'bg-primary text-primary-foreground shadow-primary/20 hover:scale-105 active:scale-95'}`}
         >
           {isSaved ? <Check size={18} strokeWidth={3} /> : <Save size={18} strokeWidth={2.5} />}
-          {isSaved ? 'PREFERENCES SAVED' : 'SAVE CHANGES'}
+          {isSaved ? '设置已保存' : '保存更改'}
         </button>
       </motion.div>
 
@@ -114,14 +114,14 @@ export default function Settings() {
             </div>
             
             <div className="space-y-2 relative z-10 w-full">
-              <h3 className="font-display text-3xl font-black tracking-tighter truncate group-hover:text-primary transition-colors">{formData.name || 'Anonymous User'}</h3>
-              <p className="text-[0.65rem] font-black text-muted-foreground uppercase tracking-[0.3em] opacity-30 mt-1 italic">Living Visual Identity</p>
+              <h3 className="font-display text-3xl font-black tracking-tighter truncate group-hover:text-primary transition-colors">{formData.name || '匿名用户'}</h3>
+              <p className="text-[0.65rem] font-black text-muted-foreground uppercase tracking-[0.3em] opacity-30 mt-1 italic">活跃视觉形象</p>
             </div>
             
             <div className="w-16 h-1 rounded-full bg-primary/10 mx-auto" />
             
             <p className="text-xs font-semibold text-muted-foreground/60 leading-loose italic px-6 tracking-tight relative z-10">
-              "{formData.bio || 'Your story begins here. Write a bio that resonates with your vision and philosophy.'}"
+              "{formData.bio || '在这里开启你的故事。写一段能体现你愿景与哲学的简介。'}"
             </p>
           </div>
         </motion.div>
@@ -139,24 +139,24 @@ export default function Settings() {
               <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
                 <User size={20} strokeWidth={2.5} />
               </div>
-              <h2 className="font-display text-2xl font-black tracking-tight">Core Identity</h2>
+              <h2 className="font-display text-2xl font-black tracking-tight">核心身份信息</h2>
               <div className="h-[1px] flex-1 bg-border/20" />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
               <div className="space-y-3">
-                <label className="text-[0.65rem] font-black text-muted-foreground/40 tracking-[0.2em] uppercase">Display Denomination</label>
+                <label className="text-[0.65rem] font-black text-muted-foreground/40 tracking-[0.2em] uppercase">显示名称</label>
                 <input 
                   name="name" 
                   value={formData.name} 
                   onChange={handleChange} 
-                  placeholder="e.g. Alex Summer"
+                  placeholder="例如：夏了个天"
                   className="w-full bg-muted/20 border-b-2 border-border/50 focus:border-primary py-3 text-xl font-black tracking-tight focus:outline-none transition-all placeholder:opacity-5"
                 />
               </div>
               
               <div className="space-y-3">
-                <label className="text-[0.65rem] font-black text-muted-foreground/40 tracking-[0.2em] uppercase">Visual Artifact (URL)</label>
+                <label className="text-[0.65rem] font-black text-muted-foreground/40 tracking-[0.2em] uppercase">头像链接 (URL)</label>
                 <input 
                   name="avatar" 
                   value={formData.avatar} 
@@ -167,12 +167,12 @@ export default function Settings() {
               </div>
 
               <div className="space-y-3 md:col-span-2">
-                <label className="text-[0.65rem] font-black text-muted-foreground/40 tracking-[0.2em] uppercase">Personal Manifest / Bio</label>
+                <label className="text-[0.65rem] font-black text-muted-foreground/40 tracking-[0.2em] uppercase">个人简介 / 签名</label>
                 <textarea 
                   name="bio" 
                   value={formData.bio} 
                   onChange={handleChange} 
-                  placeholder="Share the philosophy behind your digital footprint..."
+                  placeholder="分享你数字足迹背后的哲学..."
                   className="w-full bg-muted/20 border-2 border-border/50 rounded-[2rem] p-6 h-40 text-xs font-semibold leading-relaxed focus:outline-none focus:border-primary transition-all custom-scrollbar shadow-inner placeholder:opacity-10"
                 />
               </div>
@@ -185,15 +185,15 @@ export default function Settings() {
               <div className="w-10 h-10 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-500">
                 <Globe size={20} strokeWidth={2.5} />
               </div>
-              <h2 className="font-display text-2xl font-black tracking-tight">Social Convergence</h2>
+              <h2 className="font-display text-2xl font-black tracking-tight">社交矩阵</h2>
               <div className="h-[1px] flex-1 bg-border/20" />
             </div>
 
             <div className="space-y-8 px-2">
               {[
-                { name: 'github', label: 'GitHub Ecosystem', placeholder: 'GITHUB.COM/USERNAME', icon: <FaGithub size={18} /> },
-                { name: 'twitter', label: 'Twitter Node', placeholder: 'TWITTER.COM/USERNAME', icon: <AtSign size={18} /> },
-                { name: 'linkedin', label: 'LinkedIn Linkage', placeholder: 'LINKEDIN.COM/IN/USERNAME', icon: <LinkIcon size={18} /> }
+                { name: 'github', label: 'GitHub 仓库', placeholder: 'GITHUB.COM/USERNAME', icon: <FaGithub size={18} /> },
+                { name: 'twitter', label: 'Twitter 节点', placeholder: 'TWITTER.COM/USERNAME', icon: <AtSign size={18} /> },
+                { name: 'linkedin', label: 'LinkedIn 链接', placeholder: 'LINKEDIN.COM/IN/USERNAME', icon: <LinkIcon size={18} /> }
               ].map((social) => (
                 <div key={social.name} className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-12 group">
                   <div className="w-40 shrink-0 flex items-center gap-3">

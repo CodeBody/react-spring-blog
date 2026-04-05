@@ -63,7 +63,7 @@ export default function AdminLayout() {
                 <span className="font-display text-xl font-black tracking-tight block leading-none">
                   博客后台管理<span className="text-primary">.</span>
                 </span>
-                <p className="text-[0.6rem] uppercase tracking-widest text-muted-foreground font-bold opacity-60 mt-1">Content Hub</p>
+                <p className="text-[0.6rem] uppercase tracking-widest text-muted-foreground font-bold opacity-60 mt-1">内容枢纽</p>
               </div>
             </Link>
           </div>
@@ -144,7 +144,7 @@ export default function AdminLayout() {
               <Menu size={20} />
             </button>
             <div className="hidden lg:block">
-               <h2 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground opacity-40">Workspace / Admin</h2>
+               <h2 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground opacity-40">工作空间 / 管理员</h2>
             </div>
           </div>
 

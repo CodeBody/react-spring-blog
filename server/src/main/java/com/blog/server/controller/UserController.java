@@ -18,6 +18,7 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
+    private final com.blog.server.utils.JwtUtils jwtUtils;
 
     @Data
     public static class LoginRequest {
@@ -49,14 +50,22 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public Result<User> login(@RequestBody LoginRequest request) {
+    public Result<Map<String, Object>> login(@RequestBody LoginRequest request) {
         log.info("====== 收到登录请求: username={} ======", request.getUsername());
         
         User user = userService.login(request.getUsername(), request.getPassword());
         
         if (user != null) {
             log.info("====== 登录成功: {} ======", request.getUsername());
-            return Result.success(user);
+            
+            // 生成 Token
+            String token = jwtUtils.createToken(user.getUsername(), user.getRole());
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("user", user);
+            response.put("token", token);
+            
+            return Result.success(response);
         } else {
             log.warn("====== 登录失败: {} ======", request.getUsername());
             return Result.fail(401, "Invalid username or password");

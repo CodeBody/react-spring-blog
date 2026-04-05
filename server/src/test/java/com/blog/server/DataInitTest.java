@@ -1,6 +1,5 @@
 package com.blog.server;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.blog.server.entity.*;
 import com.blog.server.mapper.*;
 import org.junit.jupiter.api.Test;

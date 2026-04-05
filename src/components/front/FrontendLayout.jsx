@@ -119,7 +119,7 @@ const Footer = () => {
               {profile?.name ? profile.name.split(' ')[0] + '.' : 'Alex.'}
             </a>
             <p className="text-muted-foreground text-[0.95rem] mt-2">
-              Designed and built with passion.
+              用心设计并建造。
             </p>
           </div>
           <div className="flex space-x-6">
@@ -144,7 +144,7 @@ const Footer = () => {
           </div>
         </div>
         <div className="border-t border-border pt-8 text-center text-[0.9rem] text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} {profile?.name ? profile.name.split(' ')[0] : 'Alex'}. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} {profile?.name ? profile.name.split(' ')[0] : 'Alex'}. 保留所有权利。</p>
         </div>
       </div>
     </footer>

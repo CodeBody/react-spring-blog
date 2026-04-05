@@ -94,18 +94,18 @@ export default function Login() {
             
             <div className="relative z-10">
               <div className="mb-12">
-                <h2 className="font-display text-4xl font-black tracking-tight text-white mb-3">Authenticate</h2>
-                <p className="text-white/30 text-xs font-black uppercase tracking-[0.2em]">Enter your access credentials</p>
+                <h2 className="font-display text-4xl font-black tracking-tight text-white mb-3">身份验证</h2>
+                <p className="text-white/30 text-xs font-black uppercase tracking-[0.2em]">请输入您的访问凭证</p>
               </div>
 
               <form onSubmit={handleLogin} className="space-y-10">
                 <div className="space-y-6">
                   <div className="relative group">
-                    <label className="text-[0.6rem] font-black text-white/20 uppercase tracking-[0.3em] mb-3 block px-1">Authority Name</label>
+                    <label className="text-[0.6rem] font-black text-white/20 uppercase tracking-[0.3em] mb-3 block px-1">管理员账号</label>
                     <div className="relative">
                       <input
                         type="text"
-                        placeholder="ADMIN_ID"
+                        placeholder="账号 ID"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         required
@@ -116,7 +116,7 @@ export default function Login() {
                   </div>
 
                   <div className="relative group">
-                    <label className="text-[0.6rem] font-black text-white/20 uppercase tracking-[0.3em] mb-3 block px-1">Access Cipher</label>
+                    <label className="text-[0.6rem] font-black text-white/20 uppercase tracking-[0.3em] mb-3 block px-1">访问密码</label>
                     <div className="relative">
                       <input
                         type="password"
@@ -151,7 +151,7 @@ export default function Login() {
                   className="w-full h-16 bg-primary text-primary-foreground rounded-2xl font-black tracking-[0.3em] text-xs uppercase flex items-center justify-center gap-4 transition-all duration-500 hover:shadow-[0_0_40px_-5px_rgba(99,102,241,0.5)] active:scale-95 disabled:opacity-50 relative group overflow-hidden"
                 >
                   <span className="relative z-10 flex items-center gap-4">
-                    {isLoading ? 'VERIFYING...' : 'INITIALIZE ACCESS'}
+                    {isLoading ? '正在验证...' : '立即登录'}
                     {!isLoading && <ArrowRight size={20} strokeWidth={3} className="transition-transform duration-500 group-hover:translate-x-2" />}
                   </span>
                   <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />

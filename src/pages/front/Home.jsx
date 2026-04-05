@@ -46,7 +46,7 @@ const ArticleCard = ({ article, index }) => (
     <div className="flex-1 flex flex-col p-7">
       <div className="flex justify-between items-center text-[0.8rem] text-muted-foreground tracking-widest font-sans mb-4 border-b border-border pb-3">
         <time dateTime={article.date}>{formatDate(article.date)}</time>
-        <span>{Math.ceil(article.content.length / 1000)} MIN READ</span>
+        <span>{Math.ceil(article.content.length / 1000)} 分钟阅读</span>
       </div>
       
       <h3 className="font-display text-[1.3rem] font-bold mb-3 leading-[1.4] tracking-wider relative">
@@ -265,7 +265,7 @@ export default function Home() {
                     </h3>
                     <div className="h-[1px] flex-1 bg-border/50"></div>
                     <span className="text-xs font-sans tracking-widest text-muted-foreground uppercase">
-                      {categoryArticles.length} Articles
+                      {categoryArticles.length} 篇文章
                     </span>
                   </div>
                   
@@ -337,7 +337,7 @@ export default function Home() {
           <form onSubmit={handleSubscribe} className="flex-1 flex w-full max-w-md gap-0 shadow-sm">
              <input 
               type="email" 
-              placeholder="YOUR.EMAIL@EXAMPLE.COM" 
+              placeholder="您的邮箱地址" 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required 
