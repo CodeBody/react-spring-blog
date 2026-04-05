@@ -12,35 +12,55 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { formatDate } from '../../utils';
+import ConfirmModal from '../../components/common/ConfirmModal';
 
 export default function Posts() {
-  const { articles, deleteArticle, fetchArticles } = useBlog();
+  const { articles, deleteArticle, fetchAdminArticles, showToast } = useBlog();
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [selectedIds, setSelectedIds] = useState([]);
+  const [modal, setModal] = useState({ isOpen: false, title: '', message: '', onConfirm: () => {} });
 
   useEffect(() => {
-    fetchArticles();
+    fetchAdminArticles();
   }, []);
 
   const filtered = articles.filter(a => 
     a.title.toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleDelete = async (id) => {
-    if (window.confirm("确定要删除这篇文章吗？操作不可逆。")) {
-      await deleteArticle(id);
-      setSelectedIds(selectedIds.filter(selectedId => selectedId !== id));
-    }
+  const handleDelete = (id) => {
+    setModal({
+      isOpen: true,
+      title: "确定删除此文章吗？",
+      message: "该操作将从数据库中永久移除此内容，且无法撤销。",
+      onConfirm: async () => {
+        const res = await deleteArticle(id);
+        if (res.code === 200) {
+          showToast('博文已永久移除', 'success');
+          setSelectedIds(prev => prev.filter(selectedId => selectedId !== id));
+        } else {
+          showToast(res.message, 'error');
+        }
+      }
+    });
   };
 
-  const handleBatchDelete = async () => {
-    if (window.confirm(`确定要删除选中的 ${selectedIds.length} 篇文章吗？`)) {
-      for (const id of selectedIds) {
-        await deleteArticle(id);
+  const handleBatchDelete = () => {
+    setModal({
+      isOpen: true,
+      title: `批量移除 ${selectedIds.length} 篇文章？`,
+      message: "选中的所有文章将被永久删除，此操作极具破坏性。",
+      onConfirm: async () => {
+        let successCount = 0;
+        for (const id of selectedIds) {
+          const res = await deleteArticle(id);
+          if (res.code === 200) successCount++;
+        }
+        showToast(`批量操作完成：成功删除 ${successCount} 篇文章`, successCount > 0 ? 'success' : 'error');
+        setSelectedIds([]);
       }
-      setSelectedIds([]);
-    }
+    });
   };
 
   const toggleSelect = (id) => {
@@ -234,6 +254,14 @@ export default function Posts() {
            <p className="text-[0.6rem] font-black uppercase tracking-[0.3em] text-muted-foreground/30">End of Content Ledger</p>
         </div>
       </div>
+
+      <ConfirmModal 
+        isOpen={modal.isOpen}
+        onClose={() => setModal(p => ({ ...p, isOpen: false }))}
+        onConfirm={modal.onConfirm}
+        title={modal.title}
+        message={modal.message}
+      />
     </div>
   );
 }

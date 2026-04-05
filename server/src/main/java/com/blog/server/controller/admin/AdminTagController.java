@@ -7,6 +7,7 @@ import com.blog.server.entity.Tag;
 import com.blog.server.mapper.ArticleTagMapper;
 import com.blog.server.service.TagService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -48,7 +49,11 @@ public class AdminTagController {
     }
 
     @DeleteMapping("/{id}")
+    @Transactional
     public Result<Void> delete(@PathVariable Long id) {
+        // 1. 先删除文章-标签关联
+        articleTagMapper.delete(new LambdaQueryWrapper<ArticleTag>().eq(ArticleTag::getTagId, id));
+        // 2. 再删除标签本体
         tagService.removeById(id);
         return Result.success();
     }

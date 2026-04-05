@@ -49,7 +49,12 @@ public class AdminCategoryController {
 
     @DeleteMapping("/{id}")
     public Result<Void> delete(@PathVariable Long id) {
-        // Normally there's a check to prevent deletion if articles associate with it, simplified for MVP
+        // 先检查是否有文章关联此分类
+        long count = articleService.count(new LambdaQueryWrapper<Article>().eq(Article::getCategoryId, id));
+        if (count > 0) {
+            return Result.fail("该分类下已有文章，无法删除。请先移动或删除相关文章。");
+        }
+        
         categoryService.removeById(id);
         return Result.success();
     }

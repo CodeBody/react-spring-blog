@@ -30,15 +30,15 @@ export default function Contact() {
         <div className="space-y-12">
           <div>
             <h1 className="font-display text-[clamp(3rem,6vw,5rem)] font-[800] tracking-tight leading-tight mb-6">
-              Let's <span className="text-transparent bg-clip-text bg-[image:var(--gradient-brand)]">connect.</span>
+              和我 <span className="text-transparent bg-clip-text bg-[image:var(--gradient-brand)]">建立联系.</span>
             </h1>
             <p className="text-xl text-muted-foreground leading-relaxed">
-              I'm currently available for freelance, innovative open-source projects, and discussing the future of AI interfaces. 
+              目前接受自由职业、创新的开源项目以及关于 AI 界面未来的讨论。
             </p>
           </div>
 
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold tracking-tight uppercase text-muted-foreground">Find me across the web</h3>
+            <h3 className="text-lg font-semibold tracking-tight uppercase text-muted-foreground">在社交媒体上找到我</h3>
             <div className="flex flex-col sm:flex-row flex-wrap gap-4">
               {profile?.socials?.github && (
                 <a href={profile.socials.github} target="_blank" rel="noreferrer" className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-card border border-border/50 hover:border-brand-primary hover:text-brand-primary transition-all duration-300 hover:-translate-y-1 hover:shadow-glow group">
@@ -71,11 +71,11 @@ export default function Contact() {
         <div className="bg-card/40 backdrop-blur-2xl border border-border/50 rounded-[2rem] p-8 sm:p-10 shadow-xl relative overflow-hidden group">
           <div className="absolute inset-0 bg-gradient-brand opacity-0 group-hover:opacity-5 transition-opacity duration-1000 pointer-events-none" />
           
-          <h2 className="text-2xl font-display font-bold mb-8">Send a message</h2>
+          <h2 className="text-2xl font-display font-bold mb-8">发送消息</h2>
           
           <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
             <div className="space-y-2">
-              <label htmlFor="name" className="text-sm font-medium text-muted-foreground">Name</label>
+              <label htmlFor="name" className="text-sm font-medium text-muted-foreground">姓名</label>
               <input 
                 id="name"
                 type="text" 
@@ -85,7 +85,7 @@ export default function Contact() {
               />
             </div>
             <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium text-muted-foreground">Email</label>
+              <label htmlFor="email" className="text-sm font-medium text-muted-foreground">邮箱</label>
               <input 
                 id="email"
                 type="email" 
@@ -95,13 +95,13 @@ export default function Contact() {
               />
             </div>
             <div className="space-y-2">
-              <label htmlFor="message" className="text-sm font-medium text-muted-foreground">Message</label>
+              <label htmlFor="message" className="text-sm font-medium text-muted-foreground">留言内容</label>
               <textarea 
                 id="message"
                 required
                 rows="4"
                 className="w-full px-5 py-4 rounded-xl border border-border/50 bg-background/50 focus:bg-background focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all outline-none resize-none"
-                placeholder="How can I help you?"
+                placeholder="我能为你做些什么？"
               />
             </div>
             
@@ -110,9 +110,9 @@ export default function Contact() {
               disabled={status === 'submitting' || status === 'success'}
               className="w-full py-4 px-6 rounded-xl font-semibold flex items-center justify-center gap-3 text-white shadow-glow transition-all disabled:opacity-70 disabled:cursor-not-allowed bg-[image:var(--gradient-brand)] hover:opacity-90 active:scale-[0.98]"
             >
-              {status === 'idle' && <><Send size={18} /> Send Message</>}
-              {status === 'submitting' && <span className="animate-pulse">Sending...</span>}
-              {status === 'success' && <><CheckCircle2 size={18} /> Message Sent!</>}
+              {status === 'idle' && <><Send size={18} /> 提交留言</>}
+              {status === 'submitting' && <span className="animate-pulse">正在发送...</span>}
+              {status === 'success' && <><CheckCircle2 size={18} /> 消息已发送！</>}
             </button>
           </form>
         </div>

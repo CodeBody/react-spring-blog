@@ -34,12 +34,18 @@ public class AdminArticleController {
         }
         queryWrapper.orderByDesc(Article::getCreatedAt);
 
-        return Result.success(articleService.page(pageParam, queryWrapper));
+        Page<Article> resultPage = articleService.page(pageParam, queryWrapper);
+        resultPage.getRecords().forEach(articleService::populateTags);
+        return Result.success(resultPage);
     }
 
     @GetMapping("/{id}")
     public Result<Article> getById(@PathVariable Long id) {
-        return Result.success(articleService.getById(id));
+        Article article = articleService.getById(id);
+        if (article != null) {
+            articleService.populateTags(article);
+        }
+        return Result.success(article);
     }
 
     @PostMapping

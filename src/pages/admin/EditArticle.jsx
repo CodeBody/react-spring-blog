@@ -11,8 +11,8 @@ export default function EditArticle() {
   const navigate = useNavigate();
   const { 
     articles, categories, tags: allTags, 
-    fetchTags, fetchCategories, fetchSingleArticle, 
-    loading, addArticle, updateArticle, profile 
+    fetchTags, fetchCategories, fetchAdminSingleArticle, 
+    loading, addArticle, updateArticle, profile, showToast 
   } = useBlog();
   
   const isNew = !id;
@@ -23,7 +23,7 @@ export default function EditArticle() {
     if (!id) {
       // Clear data if new
     } else {
-      fetchSingleArticle(id);
+      fetchAdminSingleArticle(id);
     }
   }, [id]);
   
@@ -56,7 +56,7 @@ export default function EditArticle() {
          title: existingArticle.title,
          categoryId: existingArticle.categoryId || '',
          tags: existingArticle.tags || [],
-         status: existingArticle.status === 1 ? 'published' : 'draft',
+         status: existingArticle.status,
          content: existingArticle.content,
        });
     } else if (!isNew && !loading && articles.length > 0) {
@@ -70,26 +70,33 @@ export default function EditArticle() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.title || !formData.content) {
-      alert("请填写标题和内容。");
+    if (!formData.title.trim() || !formData.content.trim()) {
+      showToast("文章标题与内容不能为空", "warning");
       return;
     }
 
+    const tagIds = formData.tags
+      .map(tagName => allTags.find(t => t.name === tagName)?.id)
+      .filter(id => id);
+
     if (isNew) {
-      addArticle({
-        id: Date.now().toString(),
+      await addArticle({
         ...formData,
+        tagIds,
         author: profile?.name || 'Admin',
         date: new Date().toISOString(),
         views: 0
       });
+      showToast('新博文已成功发布', 'success');
     } else {
-      updateArticle({
+      await updateArticle({
         ...existingArticle,
-        ...formData
+        ...formData,
+        tagIds
       });
+      showToast('文章已更新并同步到星系', 'success');
     }
 
     navigate('/admin/posts');
@@ -164,8 +171,8 @@ export default function EditArticle() {
                     key={cat.id}
                     type="button"
                     onClick={() => setFormData(p => ({...p, categoryId: cat.id}))}
-                    className={`px-4 py-2 rounded-xl text-[0.65rem] font-bold tracking-tight transition-all border-2 
-                      ${formData.categoryId === cat.id 
+                    className={`px-4 py-2 rounded-xl text-[0.65rem] font-bold tracking-tight transition-all border 
+                      ${String(formData.categoryId) === String(cat.id) 
                         ? 'bg-primary text-white border-primary shadow-sm' 
                         : 'bg-card text-muted-foreground border-border hover:text-foreground hover:bg-muted'}`}
                   >
@@ -196,7 +203,7 @@ export default function EditArticle() {
                           tags: isSelected ? p.tags.filter(t => t !== tag.name) : [...p.tags, tag.name]
                         }))
                       }}
-                      className={`px-4 py-2 rounded-xl text-[0.65rem] font-bold tracking-tight transition-all border-2
+                      className={`px-4 py-2 rounded-xl text-[0.65rem] font-bold tracking-tight transition-all border
                         ${isSelected 
                         ? 'bg-primary text-white border-primary shadow-sm' 
                         : 'bg-card text-muted-foreground border-border hover:text-foreground hover:bg-muted'}`}

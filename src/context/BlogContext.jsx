@@ -18,6 +18,8 @@ import {
   updateArticleApi, 
   deleteArticleApi, 
   fetchArticleById,
+  fetchAdminArticleById,
+  fetchAdminArticles,
   fetchAdminProfile,
   fetchDashboardStats 
 } from '../utils/api';
@@ -34,6 +36,15 @@ export const BlogProvider = ({ children }) => {
   const [profile, setProfile] = useState({});
   const [dashboardStats, setDashboardStats] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [toasts, setToasts] = useState([]);
+
+  const showToast = (message, type = 'success', duration = 3000) => {
+    const id = Date.now();
+    setToasts(prev => [...prev, { id, message, type }]);
+    setTimeout(() => {
+      setToasts(prev => prev.filter(t => t.id !== id));
+    }, duration);
+  };
 
   const fetchUsers = async () => {
     const usrs = await fetchAllUsers();
@@ -45,6 +56,24 @@ export const BlogProvider = ({ children }) => {
     const data = await fetchArticles(page, size, catId);
     setArticles(data);
     setLoading(false);
+  };
+
+  const fetchAdminSingleArticle = async (id) => {
+    setLoading(true);
+    const data = await fetchAdminArticleById(id);
+    if (data) {
+      setArticles(prev => {
+        const index = prev.findIndex(a => a.id === data.id);
+        if (index > -1) {
+          const newArticles = [...prev];
+          newArticles[index] = data;
+          return newArticles;
+        }
+        return [...prev, data];
+      });
+    }
+    setLoading(false);
+    return data;
   };
 
   const fetchSingleArticle = async (id) => {
@@ -184,12 +213,21 @@ export const BlogProvider = ({ children }) => {
       addUser, updateUser, deleteUser,
       fetchUsers, 
       fetchArticles: fetchArticlesData,
+      fetchAdminArticles: async (page = 1, size = 50, catId = null) => {
+        setLoading(true);
+        const data = await fetchAdminArticles(page, size, catId);
+        setArticles(data || []);
+        setLoading(false);
+      },
       fetchCategories: fetchCategoriesData,
       fetchTags: fetchTagsData,
       fetchProfile: fetchProfileData,
       fetchDashboardData,
       updateProfile,
-      fetchSingleArticle
+      fetchSingleArticle,
+      fetchAdminSingleArticle,
+      toasts,
+      showToast
     }}>
       {children}
     </BlogContext.Provider>

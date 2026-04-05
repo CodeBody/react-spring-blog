@@ -11,13 +11,15 @@ import {
   FileText,
   Search
 } from 'lucide-react';
+import ConfirmModal from '../../components/common/ConfirmModal';
 
 export default function Categories() {
-  const { categories, addCategory, updateCategory, deleteCategory, fetchCategories } = useBlog();
+  const { categories, addCategory, updateCategory, deleteCategory, fetchCategories, showToast } = useBlog();
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({ name: '', description: '' });
   const [search, setSearch] = useState('');
+  const [modal, setModal] = useState({ isOpen: false, title: '', message: '', onConfirm: () => {} });
 
   useEffect(() => {
     fetchCategories();
@@ -29,12 +31,18 @@ export default function Categories() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (editingId) {
-      await updateCategory({ ...formData, id: editingId });
+    if (!formData.name.trim()) {
+      showToast('分类名称不能为空', 'warning');
+      return;
+    }
+    const res = editingId ? await updateCategory({ ...formData, id: editingId }) : await addCategory(formData);
+    if (res.code === 200) {
+      showToast(editingId ? '分类更新完成' : '新分类已创建', 'success');
+      setFormData({ name: '', description: '' });
       setEditingId(null);
-    } else {
-      await addCategory(formData);
       setIsAdding(false);
+    } else {
+      showToast(res.message, 'error');
     }
     setFormData({ name: '', description: '' });
   };
@@ -45,10 +53,20 @@ export default function Categories() {
     setIsAdding(false);
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm("确定要删除这个分类吗？")) {
-      await deleteCategory(id);
-    }
+  const handleDelete = (id) => {
+    setModal({
+      isOpen: true,
+      title: "确定移除此分类吗？",
+      message: "该分类及其相关属性将从系统中移除。如果该分类下仍有文章，系统将拦截操作并给予警告提示。",
+      onConfirm: async () => {
+        const res = await deleteCategory(id);
+        if (res.code !== 200) {
+          showToast(res.message, 'error');
+        } else {
+          showToast('该分类已从系统移除', 'success');
+        }
+      }
+    });
   };
 
   const cancel = () => {
@@ -85,36 +103,56 @@ export default function Categories() {
             exit={{ opacity: 0, y: -20, height: 0 }}
             className="overflow-hidden"
           >
-            <form onSubmit={handleSubmit} className="glass-card p-8 rounded-[2rem] border-primary/20 bg-primary/[0.02] shadow-2xl shadow-primary/5">
-              <div className="flex flex-col md:flex-row gap-8 items-start">
-                <div className="flex-1 space-y-3 w-full">
-                  <label className="text-[0.6rem] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-50">分类名称</label>
-                  <input
-                    required
-                    value={formData.name}
-                    onChange={(e) => setFormData({...formData, name: e.target.value})}
-                    placeholder="例如: 技术架构, 设计灵感..."
-                    className="w-full bg-transparent border-b-2 border-border/50 focus:border-primary py-3 text-2xl font-display font-black focus:outline-none placeholder:opacity-10 transition-all"
-                  />
+            <form onSubmit={handleSubmit} className="bg-card rounded-[2.5rem] border border-border shadow-xl overflow-hidden mb-12 animate-in fade-in slide-in-from-top-4 duration-500">
+              {/* Form Title Header */}
+              <div className="px-10 py-6 bg-muted/30 border-b border-border flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                   <div className="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                      <Plus size={16} strokeWidth={3} />
+                   </div>
+                   <h2 className="text-sm font-black uppercase tracking-widest">{editingId ? '编辑分类详情' : '创建新分类专栏'}</h2>
                 </div>
-                <div className="flex-1 space-y-3 w-full">
-                   <label className="text-[0.6rem] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-50">描述 (可选)</label>
-                   <input
-                    value={formData.description}
-                    onChange={(e) => setFormData({...formData, description: e.target.value})}
-                    placeholder="简短描述该分类包含的内容..."
-                    className="w-full bg-transparent border-b-2 border-border/50 focus:border-primary py-3 text-lg font-semibold focus:outline-none placeholder:opacity-10 transition-all"
-                  />
-                </div>
-                <div className="flex items-center gap-3 pt-8">
-                   <button type="submit" className="w-12 h-12 rounded-2xl bg-primary text-primary-foreground shadow-lg shadow-primary/20 flex items-center justify-center hover:scale-110 active:scale-95 transition-all">
-                     <Check size={20} strokeWidth={3} />
-                   </button>
-                   <button type="button" onClick={cancel} className="w-12 h-12 rounded-2xl bg-muted/50 text-muted-foreground flex items-center justify-center hover:bg-destructive/10 hover:text-destructive transition-all">
-                     <X size={20} strokeWidth={3} />
+                <div className="flex gap-2">
+                   <button type="button" onClick={cancel} className="px-4 py-2 rounded-xl text-[0.65rem] font-bold uppercase tracking-widest text-muted-foreground hover:bg-muted transition-all">取消</button>
+                   <button type="submit" className="px-6 py-2 bg-primary text-white rounded-xl text-[0.65rem] font-bold uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2">
+                     <Check size={14} strokeWidth={3} /> {editingId ? '同步更新' : '立即创建'}
                    </button>
                 </div>
               </div>
+
+              {/* Section 1: Name */}
+              <section className="px-10 py-8 space-y-4 border-b border-border/50">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                    <Layers size={18} />
+                  </div>
+                  <label className="text-[0.65rem] font-black uppercase tracking-[0.2em] text-foreground/50">分类名称</label>
+                </div>
+                <input 
+                  required
+                  value={formData.name}
+                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  placeholder="例如: 技术架构, 设计灵感..."
+                  className="w-full bg-muted/10 border border-transparent focus:border-primary/20 focus:bg-card rounded-2xl px-6 py-4 text-xl font-bold text-foreground transition-all focus:outline-none placeholder:text-muted-foreground/20"
+                />
+              </section>
+
+              {/* Section 2: Description */}
+              <section className="px-10 py-8 space-y-4">
+                 <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center">
+                       <FileText size={18} />
+                    </div>
+                     <label className="text-[0.65rem] font-black uppercase tracking-[0.2em] text-foreground/50">分类描述 (Context)</label>
+                 </div>
+                 <textarea 
+                  rows={2}
+                  value={formData.description}
+                  onChange={(e) => setFormData({...formData, description: e.target.value})}
+                  placeholder="简短描述该分类包含的内容，帮助你在创作时保持焦点..."
+                  className="w-full bg-muted/10 border border-transparent focus:border-primary/20 focus:bg-card rounded-2xl px-6 py-4 text-sm font-semibold text-foreground/70 transition-all focus:outline-none placeholder:text-muted-foreground/20 resize-none"
+                />
+              </section>
             </form>
           </motion.div>
         )}
@@ -140,44 +178,69 @@ export default function Categories() {
       </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-12">
-          {filtered.map((cat, idx) => {
-            return (
+          <AnimatePresence mode="popLayout">
+            {filtered.length > 0 ? filtered.map((cat, idx) => {
+              return (
+                <motion.div 
+                  key={cat.id} 
+                  layout
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
+                  transition={{ delay: idx * 0.05 }}
+                  className="glass-card p-10 rounded-[2.5rem] border border-border/40 hover:border-primary/40 hover:bg-primary/[0.02] shadow-premium hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 group relative overflow-hidden"
+                >
+                  <div className="absolute -right-10 -bottom-10 w-32 h-32 bg-primary/5 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                  
+                  <div className="flex justify-between items-start mb-8">
+                    <div className="w-12 h-12 rounded-2xl bg-primary/5 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground group-hover:rotate-6 shadow-sm transition-all duration-700">
+                      <Layers size={20} />
+                    </div>
+                    <div className="flex gap-2">
+                      <button onClick={() => handleEdit(cat)} className="w-8 h-8 rounded-xl bg-muted/50 flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all" title="编辑"><Edit3 size={14}/></button>
+                      <button onClick={() => handleDelete(cat.id)} className="w-8 h-8 rounded-xl bg-muted/50 flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all" title="删除"><Trash2 size={14}/></button>
+                    </div>
+                  </div>
+                  
+                  <h3 className="font-display text-2xl font-black tracking-tight mb-2 group-hover:text-primary transition-colors">{cat.name}</h3>
+                  <p className="text-xs font-semibold text-muted-foreground/60 line-clamp-2 min-h-[2.5rem] mb-8 font-sans leading-relaxed tracking-tight">
+                    {cat.description || "暂无分类描述信息"}
+                  </p>
+                  
+                  <div className="pt-6 border-t border-border/40 flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-[0.6rem] font-black uppercase tracking-[0.1em] text-muted-foreground/40">
+                      <FileText size={12} className="text-primary/50" /> {cat.articleCount || 0} Articles
+                    </div>
+                    <div className="text-[0.6rem] font-black text-muted-foreground/20 italic tracking-widest uppercase">ID: {cat.id}</div>
+                  </div>
+                </motion.div>
+              );
+            }) : (
               <motion.div 
-                key={cat.id} 
-                layout
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: idx * 0.05 }}
-                className="glass-card p-10 rounded-[2.5rem] border border-border/40 hover:border-primary/40 hover:bg-primary/[0.02] shadow-premium hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 group relative overflow-hidden"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="col-span-full py-32 text-center opacity-40 flex flex-col items-center justify-center gap-8"
               >
-                <div className="absolute -right-10 -bottom-10 w-32 h-32 bg-primary/5 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                
-                <div className="flex justify-between items-start mb-8">
-                  <div className="w-12 h-12 rounded-2xl bg-primary/5 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground group-hover:rotate-6 shadow-sm transition-all duration-700">
-                    <Layers size={20} />
-                  </div>
-                  <div className="flex gap-2">
-                    <button onClick={() => handleEdit(cat)} className="w-8 h-8 rounded-xl bg-muted/50 flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all" title="编辑"><Edit3 size={14}/></button>
-                    <button onClick={() => handleDelete(cat.id)} className="w-8 h-8 rounded-xl bg-muted/50 flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all" title="删除"><Trash2 size={14}/></button>
-                  </div>
-                </div>
-                
-                <h3 className="font-display text-2xl font-black tracking-tight mb-2 group-hover:text-primary transition-colors">{cat.name}</h3>
-                <p className="text-xs font-semibold text-muted-foreground/60 line-clamp-2 min-h-[2.5rem] mb-8 font-sans leading-relaxed tracking-tight">
-                  {cat.description || "暂无分类描述信息"}
-                </p>
-                
-                <div className="pt-6 border-t border-border/40 flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-[0.6rem] font-black uppercase tracking-[0.1em] text-muted-foreground/40">
-                    <FileText size={12} className="text-primary/50" /> {cat.articleCount || 0} Articles
-                  </div>
-                  <div className="text-[0.6rem] font-black text-muted-foreground/20 italic tracking-widest uppercase">ID: {cat.id}</div>
-                </div>
+                 <div className="w-28 h-28 rounded-[3rem] bg-muted/20 flex items-center justify-center relative shadow-inner">
+                   <Layers size={48} className="relative z-10 text-muted-foreground/30" />
+                 </div>
+                 <div className="space-y-2">
+                   <p className="text-lg font-black uppercase tracking-[0.5em] text-muted-foreground/60">未发现分类</p>
+                   <p className="text-xs font-bold opacity-40 tracking-wider">尝试更换搜索关键词或新增一个分类专栏</p>
+                 </div>
               </motion.div>
-            );
-          })}
+            )}
+          </AnimatePresence>
         </div>
       </div>
+
+      <ConfirmModal 
+        isOpen={modal.isOpen}
+        onClose={() => setModal(p => ({ ...p, isOpen: false }))}
+        onConfirm={modal.onConfirm}
+        title={modal.title}
+        message={modal.message}
+      />
     </div>
   );
 }

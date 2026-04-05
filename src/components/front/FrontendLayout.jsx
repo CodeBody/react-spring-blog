@@ -3,6 +3,7 @@ import { Outlet, Link, useLocation } from 'react-router-dom';
 import { Menu, X, Moon, Sun } from 'lucide-react';
 import { FaGithub, FaTwitter, FaLinkedin } from 'react-icons/fa';
 import { useBlog } from '../../context/BlogContext';
+import Toast from '../common/Toast';
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -39,11 +40,11 @@ const Header = () => {
   const toggleTheme = () => setDarkMode(!darkMode);
 
   const navLinks = [
-    { name: 'GALAXY', path: '/planet' },
-    { name: 'Articles', path: '/' },
-    { name: 'Projects', path: '/projects' },
-    { name: 'About', path: '/about' },
-    { name: 'Contact', path: '/contact' },
+    { name: '灵感星系', path: '/planet' },
+    { name: '博文', path: '/' },
+    { name: '项目', path: '/projects' },
+    { name: '关于', path: '/about' },
+    { name: '联系', path: '/contact' },
   ];
 
   return (
@@ -158,6 +159,7 @@ export default function FrontendLayout() {
         <Outlet />
       </main>
       {location.pathname !== '/planet' && <Footer />}
+      <Toast />
     </div>
   );
 }

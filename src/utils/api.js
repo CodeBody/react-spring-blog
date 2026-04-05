@@ -1,3 +1,18 @@
+export const fetchAdminArticles = async (page = 1, size = 50, categoryId = null) => { 
+  try { 
+    let url = `/api/admin/articles?page=${page}&size=${size}`; 
+    if (categoryId) url += `&categoryId=${categoryId}`; 
+    const res = await fetch(url); 
+    const data = await res.json(); 
+    if (data.code === 200) { 
+      return data.data.records.map(adaptArticle); 
+    } 
+  } catch (error) { 
+    console.error("Fetch admin articles error:", error); 
+  } 
+  return []; 
+}; 
+
 export const fetchArticles = async (page = 1, size = 50, categoryId = null) => {
   try {
     let url = `/api/articles?page=${page}&size=${size}`;
@@ -11,6 +26,19 @@ export const fetchArticles = async (page = 1, size = 50, categoryId = null) => {
     console.error('Fetch articles error:', error);
   }
   return [];
+};
+
+export const fetchAdminArticleById = async (id) => {
+  try {
+    const res = await fetch(`/api/admin/articles/${id}`);
+    const data = await res.json();
+    if (data.code === 200) {
+      return adaptArticle(data.data);
+    }
+  } catch (error) {
+    console.error("Fetch admin article by id error:", error);
+  }
+  return null;
 };
 
 export const fetchArticleById = async (id) => {
@@ -146,8 +174,8 @@ export const createArticle = async (article) => {
     content: matchAbstractFromContent(article.content),
     status: article.status === 'published' ? 1 : 0,
     authorId: 10001, // Mock fallback
-    categoryId: article.categoryId || 20001, // Use selection if available
-    tagIds: []
+    categoryId: article.categoryId || null,
+    tagIds: article.tagIds || []
   };
   const res = await fetch('/api/admin/articles', {
     method: 'POST',
@@ -162,7 +190,8 @@ export const updateArticleApi = async (article) => {
     title: article.title,
     content: article.content,
     status: article.status === 'published' ? 1 : 0,
-    categoryId: article.categoryId
+    categoryId: article.categoryId || null,
+    tagIds: article.tagIds || []
   };
   const res = await fetch(`/api/admin/articles/${article.id}`, {
     method: 'PUT',
@@ -232,7 +261,7 @@ const adaptArticle = (item) => {
     content: item.content ? item.content.replace(/\\n/g, '\n') : '',
     author: "Admin", // Fallback for MVP since no Author join is setup
     date: item.publishedAt ? item.publishedAt.replace(' ', 'T') : new Date().toISOString(),
-    tags: item.tags || [], 
+    tags: item.tags || [],
     views: item.views || 0,
     status: item.status === 1 ? 'published' : 'draft',
     categoryId: String(item.categoryId)

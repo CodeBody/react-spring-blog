@@ -4,6 +4,7 @@ import { LayoutDashboard, FileText, Settings, LogOut, Menu, X, Moon, Sun, Search
 import { useAuth } from '../../context/AuthContext';
 import { useBlog } from '../../context/BlogContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import Toast from '../common/Toast';
 
 export default function AdminLayout() {
   const { logout } = useAuth();
@@ -186,6 +187,9 @@ export default function AdminLayout() {
       {sidebarOpen && (
         <div className="fixed inset-0 z-40 bg-background/40 backdrop-blur-sm lg:hidden transition-all duration-500" onClick={() => setSidebarOpen(false)} />
       )}
+
+      {/* Global Toast Notifications */}
+      <Toast />
     </div>
   );
 }

@@ -23,10 +23,10 @@ export default function About() {
         </div>
         <div className="text-center md:text-left">
           <h1 className="font-display font-[800] text-[clamp(2.5rem,5vw,4rem)] tracking-[-0.02em] leading-tight mb-4">
-            Hi, I'm <span className="gradient-text pb-2">{profile?.name?.split(' ')[0] || 'Friend'}</span>.
+            你好，我是 <span className="gradient-text pb-2">{profile?.name?.split(' ')[0] || '夏天'}</span>.
           </h1>
           <p className="text-xl text-muted-foreground max-w-xl leading-relaxed">
-            {profile?.bio || 'Building things for the web.'}
+            {profile?.bio || '专注于前端开发、UX 设计和现代 Web 架构。'}
           </p>
           <div className="flex items-center justify-center md:justify-start gap-4 mt-8">
             {profile?.socials?.github && (
@@ -55,15 +55,15 @@ export default function About() {
         <section>
           <h2 className="font-display text-3xl font-bold tracking-tight mb-6 flex items-center gap-3">
              <span className="bg-glass border border-border text-foreground w-10 h-10 rounded-lg flex items-center justify-center text-xl shadow-sm">🚀</span>
-             What I Do
+             我的工作
           </h2>
           <Card className="border-border bg-glass backdrop-blur-md shadow-sm hover:border-border-hover transition-colors rounded-2xl">
             <CardContent className="p-8 prose prose-lg dark:prose-invert max-w-none text-muted-foreground">
               <p>
-                I specialize in front-end development, UX design, and modern web architectures. My goal is to bridge the gap between aesthetics and functionality, crafting fast, accessible, and delightful user experiences.
+                我专注于前端开发、UX 设计和现代 Web 架构。我的目标是架起美学与功能之间的桥梁，打造快速、易用且令人愉悦的用户体验。
               </p>
               <p>
-                When I'm not coding, I'm usually writing on this blog, contributing to open source, or exploring new design trends. I strongly believe in the power of the web to connect people and ideas.
+                在不写代码的时候，我通常会在这里写博客、贡献开源项目或探索新的设计趋势。我深信互联网连接人与思想的力量。
               </p>
             </CardContent>
           </Card>
@@ -72,7 +72,7 @@ export default function About() {
         <section>
            <h2 className="font-display text-3xl font-bold tracking-tight mb-6 flex items-center gap-3">
              <span className="bg-glass border border-border text-foreground w-10 h-10 rounded-lg flex items-center justify-center text-xl shadow-sm">🛠️</span>
-             Core Technologies
+             核心技术
           </h2>
           <div className="flex flex-wrap gap-3">
             {['React 18', 'Vite', 'Tailwind CSS v3', 'TypeScript', 'Next.js', 'Figma', 'Node.js', 'GraphQL'].map(tech => (

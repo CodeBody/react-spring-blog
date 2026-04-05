@@ -11,13 +11,15 @@ import {
   Search,
   Hash
 } from 'lucide-react';
+import ConfirmModal from '../../components/common/ConfirmModal';
 
 export default function Tags() {
-  const { tags, addTag, updateTag, deleteTag, fetchTags } = useBlog();
+  const { tags, addTag, updateTag, deleteTag, fetchTags, showToast } = useBlog();
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({ name: '' });
   const [search, setSearch] = useState('');
+  const [modal, setModal] = useState({ isOpen: false, title: '', message: '', onConfirm: () => {} });
 
   useEffect(() => {
     fetchTags();
@@ -29,12 +31,18 @@ export default function Tags() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (editingId) {
-      await updateTag({ ...formData, id: editingId });
+    if (!formData.name.trim()) {
+      showToast('标签名称不能为空', 'warning');
+      return;
+    }
+    const res = editingId ? await updateTag({ ...formData, id: editingId }) : await addTag(formData);
+    if (res.code === 200) {
+      showToast(editingId ? '标签已重命名' : '新标签已创建', 'success');
+      setFormData({ name: '' });
       setEditingId(null);
-    } else {
-      await addTag(formData);
       setIsAdding(false);
+    } else {
+      showToast(res.message, 'error');
     }
     setFormData({ name: '' });
   };
@@ -45,10 +53,20 @@ export default function Tags() {
     setIsAdding(false);
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm("确定要删除这个标签吗？")) {
-      await deleteTag(id);
-    }
+  const handleDelete = (id) => {
+    setModal({
+      isOpen: true,
+      title: "确定移除此标签吗？",
+      message: "该标签及其在所有相关文章中的绑定记录将一并被清除，且无法撤销。",
+      onConfirm: async () => {
+        const res = await deleteTag(id);
+        if (res.code === 200) {
+          showToast('标签及其关联记录已清除', 'success');
+        } else {
+          showToast(res.message, 'error');
+        }
+      }
+    });
   };
 
   const cancel = () => {
@@ -79,37 +97,53 @@ export default function Tags() {
       {/* Inline Editor */}
       <AnimatePresence>
         {(isAdding || editingId) && (
-          <motion.div 
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className="glass-card p-8 rounded-[2rem] border-primary/20 bg-primary/[0.02] shadow-2xl shadow-primary/5"
-          >
-            <form onSubmit={handleSubmit} className="flex flex-col md:flex-row items-end gap-6">
-              <div className="flex-1 space-y-3 w-full">
-                <label className="text-[0.6rem] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-50">名称 (建议简短且唯一)</label>
-                <div className="relative group">
-                  <span className="absolute left-0 top-1/2 -translate-y-1/2 text-primary font-black text-2xl opacity-40">#</span>
+            <form onSubmit={handleSubmit} className="bg-card rounded-[2.5rem] border border-border shadow-xl overflow-hidden mb-12 animate-in fade-in slide-in-from-top-4 duration-500">
+              {/* Form Header */}
+              <div className="px-10 py-6 bg-muted/30 border-b border-border flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                   <div className="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                      <Plus size={16} strokeWidth={3} />
+                   </div>
+                   <h2 className="text-sm font-black uppercase tracking-widest">{editingId ? '修改标签详情' : '创建新元数据标签'}</h2>
+                </div>
+                <div className="flex gap-2">
+                   <button type="button" onClick={cancel} className="px-4 py-2 rounded-xl text-[0.65rem] font-bold uppercase tracking-widest text-muted-foreground hover:bg-muted transition-all">取消</button>
+                   <button type="submit" className="px-6 py-2 bg-primary text-white rounded-xl text-[0.65rem] font-bold uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2">
+                     <Check size={14} strokeWidth={3} /> {editingId ? '同步更新' : '立即发布'}
+                   </button>
+                </div>
+              </div>
+
+              {/* Section: Name */}
+              <section className="px-10 py-10 space-y-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                    <TagIcon size={18} />
+                  </div>
+                  <label className="text-[0.65rem] font-black uppercase tracking-[0.2em] text-foreground/50">标签标识符 (Kebab-case)</label>
+                </div>
+                <div className="relative">
+                  <span className="absolute left-6 top-1/2 -translate-y-1/2 text-primary font-black text-3xl opacity-20 select-none">#</span>
                   <input
                     autoFocus
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({...formData, name: e.target.value.replace(/\s/g, '-')})}
                     placeholder="例如: react-hooks, design-system..."
-                    className="w-full bg-transparent pl-8 border-b-2 border-border/50 focus:border-primary py-2 text-2xl font-display font-black focus:outline-none placeholder:opacity-10 transition-all"
+                    className="w-full bg-muted/10 border border-transparent focus:border-primary/20 focus:bg-card rounded-2xl pl-14 pr-6 py-5 text-2xl font-display font-black text-foreground transition-all focus:outline-none placeholder:text-muted-foreground/20"
                   />
                 </div>
-              </div>
-              <div className="flex items-center gap-3 pt-4 w-full md:w-auto">
-                 <button type="submit" className="flex-1 md:flex-none h-12 bg-primary text-primary-foreground rounded-2xl shadow-lg shadow-primary/20 flex items-center justify-center gap-2 font-bold text-xs uppercase tracking-widest px-8 hover:scale-105 active:scale-95 transition-all">
-                   <Check size={16} strokeWidth={3} /> 保存
-                 </button>
-                 <button type="button" onClick={cancel} className="h-12 w-12 rounded-2xl bg-muted/50 text-muted-foreground flex items-center justify-center hover:bg-destructive/10 hover:text-destructive transition-all">
-                   <X size={20} strokeWidth={3} />
-                 </button>
-              </div>
+                
+                <div className="flex gap-4 p-4 rounded-2xl bg-primary/5 border border-primary/10 items-start">
+                   <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center text-primary mt-0.5">
+                      <Hash size={10} strokeWidth={3} />
+                   </div>
+                   <p className="text-[0.6rem] font-medium text-primary/60 leading-relaxed italic">
+                     提示：标签建议使用小写字母和连字符，这有助于在 URL 检索和自动化处理中保持最佳兼容性。
+                   </p>
+                </div>
+              </section>
             </form>
-          </motion.div>
         )}
       </AnimatePresence>
 
@@ -223,6 +257,14 @@ export default function Tags() {
            标签用于更灵活的文章分类检索，删除标签记录不会同步清理已分发的文章内容缓存。
         </p>
       </motion.div>
+
+      <ConfirmModal 
+        isOpen={modal.isOpen}
+        onClose={() => setModal(p => ({ ...p, isOpen: false }))}
+        onConfirm={modal.onConfirm}
+        title={modal.title}
+        message={modal.message}
+      />
     </div>
   );
 }

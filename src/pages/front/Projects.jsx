@@ -75,10 +75,10 @@ export default function Projects() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
         <div className="max-w-2xl">
           <h1 className="font-display text-[clamp(3rem,6vw,5rem)] font-[800] tracking-tight leading-tight mb-6">
-            Selected <span className="text-transparent bg-clip-text bg-[image:var(--gradient-brand)]">Projects.</span>
+            精选 <span className="text-transparent bg-clip-text bg-[image:var(--gradient-brand)]">项目.</span>
           </h1>
           <p className="text-xl text-muted-foreground leading-relaxed">
-            A collection of things I've built. Ranging from tiny experimental tools to fully-featured open source applications.
+            我构建的项目合集，从实验性小工具到全功能开源应用。
           </p>
         </div>
         
@@ -86,7 +86,7 @@ export default function Projects() {
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <input
             type="text"
-            placeholder="Search projects..."
+            placeholder="搜索项目..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-11 pr-4 py-3 bg-card/50 backdrop-blur-md border border-border/60 shadow-sm rounded-2xl text-[0.95rem] focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all"
@@ -121,10 +121,10 @@ export default function Projects() {
 
               <div className="flex items-center gap-6 mt-auto">
                 <a href={project.github} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors group/link">
-                  <Github size={18} className="group-hover/link:-translate-y-0.5 transition-transform" /> Repository
+                  <Github size={18} className="group-hover/link:-translate-y-0.5 transition-transform" /> 代码仓库
                 </a>
                 <a href={project.demo} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-brand-primary transition-colors group/link">
-                  <ExternalLink size={18} className="group-hover/link:-translate-y-0.5 transition-transform" /> Live Demo
+                  <ExternalLink size={18} className="group-hover/link:-translate-y-0.5 transition-transform" /> 在线演示
                 </a>
               </div>
             </div>
@@ -133,7 +133,7 @@ export default function Projects() {
         </div>
       ) : (
         <div className="text-center py-20 bg-muted/20 border border-border/50 rounded-3xl">
-          <p className="text-lg text-muted-foreground">No projects found matching "{searchQuery}"</p>
+          <p className="text-lg text-muted-foreground">未找到匹配 "{searchQuery}" 的项目</p>
         </div>
       )}
 

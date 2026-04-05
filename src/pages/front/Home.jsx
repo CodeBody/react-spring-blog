@@ -66,7 +66,7 @@ export default function Home() {
   const location = useLocation();
   const navigate = useNavigate();
   const { categoryId } = useParams();
-  const { articles, categories, fetchArticles, fetchCategories } = useBlog();
+  const { articles, categories, fetchArticles, fetchCategories, showToast } = useBlog();
   
   const isAllArticles = location.pathname === '/articles';
   const isCategoryFilter = !!categoryId;
@@ -123,7 +123,7 @@ export default function Home() {
 
   const handleSubscribe = (e) => {
     e.preventDefault();
-    alert(`订阅成功！已将 ${email} 加入列表。`);
+    showToast(`订阅成功！已将 ${email} 加入列表。`, 'success');
     setEmail('');
   };
 
