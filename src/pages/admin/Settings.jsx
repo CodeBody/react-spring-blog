@@ -100,7 +100,7 @@ export default function Settings() {
               <div className="absolute inset-0 bg-primary/20 rounded-[2.5rem] blur-2xl group-hover:bg-primary/30 transition-all duration-700" />
               <div className="w-44 h-44 rounded-[3rem] border-4 border-background overflow-hidden bg-muted/20 relative z-10 p-1.5 shadow-2xl">
                 <img 
-                  src={formData.avatar || "https://api.dicebear.com/7.x/notionists/svg?seed=Admin"} 
+                  src={formData.avatar || "/assets/images/avatar-default.svg"} 
                   alt="Avatar Preview" 
                   className="w-full h-full object-cover rounded-[2.5rem] transition-all duration-1000 grayscale group-hover:grayscale-0 group-hover:scale-110"
                 />

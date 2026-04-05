@@ -13,6 +13,8 @@ export default function ArticleDetail() {
   const { categories, fetchCategories, fetchSingleArticle } = useBlog();
   const [article, setArticle] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [liked, setLiked] = useState(false);
+  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {

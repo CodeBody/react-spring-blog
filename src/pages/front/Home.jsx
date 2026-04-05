@@ -139,7 +139,7 @@ export default function Home() {
             initial={{ scale: 1.5, filter: "blur(10px)" }}
             animate={{ scale: 1, filter: "blur(0px)" }}
             transition={{ duration: 2.2, ease: [0.16, 1, 0.3, 1] }}
-            src="https://images.unsplash.com/photo-1542224566-6e85f2e6772f?q=80&w=2600&auto=format&fit=crop" 
+            src="/assets/images/hero-mountains.jpg" 
             alt="Mountains" 
             className="w-full h-full object-cover"
             style={{ 

@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useBlog } from '../../context/BlogContext';
 import { Mail, Send, CheckCircle2 } from 'lucide-react';
 import { FaGithub as Github, FaTwitter as Twitter, FaLinkedin as Linkedin } from 'react-icons/fa';
 
 export default function Contact() {
-  const { profile } = useBlog();
+  const { profile, fetchProfile } = useBlog();
   const [status, setStatus] = useState('idle');
+
+  useEffect(() => {
+    fetchProfile();
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();

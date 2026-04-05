@@ -1,25 +1,29 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useBlog } from '../../context/BlogContext';
 import { Mail } from 'lucide-react';
 import { FaGithub, FaTwitter, FaLinkedin } from 'react-icons/fa';
 import { Card, CardContent } from '../../components/common/Card';
 
 export default function About() {
-  const { profile } = useBlog();
+  const { profile, fetchProfile } = useBlog();
+
+  useEffect(() => {
+    fetchProfile();
+  }, []);
 
   return (
     <div className="max-w-3xl mx-auto px-6 lg:px-8 w-full pt-32 pb-12 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out">
       <div className="flex flex-col md:flex-row items-center gap-12 mb-16">
         <div className="w-48 h-48 md:w-56 md:h-56 rounded-full overflow-hidden border-4 border-border shrink-0 shadow-lg">
           <img 
-            src={profile?.avatar || "https://api.dicebear.com/7.x/notionists/svg?seed=Alex"} 
+            src={profile?.avatar || "/assets/images/avatar-default.svg"} 
             alt={profile?.name}
             className="w-full h-full object-cover bg-muted"
           />
         </div>
         <div className="text-center md:text-left">
           <h1 className="font-display font-[800] text-[clamp(2.5rem,5vw,4rem)] tracking-[-0.02em] leading-tight mb-4">
-            Hi, I'm <span className="gradient-text pb-2">{profile?.name.split(' ')[0]}</span>.
+            Hi, I'm <span className="gradient-text pb-2">{profile?.name?.split(' ')[0] || 'Friend'}</span>.
           </h1>
           <p className="text-xl text-muted-foreground max-w-xl leading-relaxed">
             {profile?.bio || 'Building things for the web.'}

@@ -97,25 +97,25 @@ export default function EditArticle() {
 
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-32">
+    <div className="min-h-screen bg-background pb-32">
       {/* Boutique Studio Header */}
       <motion.div 
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200 py-4 mb-10"
+        className="sticky top-0 z-50 bg-card/80 backdrop-blur-xl border-b border-border py-4 mb-10"
       >
         <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
           <div className="flex items-center gap-6">
-            <Link to="/admin/posts" className="w-10 h-10 flex items-center justify-center rounded-2xl bg-slate-100 hover:bg-primary hover:text-white transition-all group">
+            <Link to="/admin/posts" className="w-10 h-10 flex items-center justify-center rounded-2xl bg-muted hover:bg-primary hover:text-white transition-all group">
               <ArrowLeft size={20} className="group-hover:-translate-x-0.5 transition-transform" />
             </Link>
             <div>
-               <h1 className="text-lg font-bold text-slate-900 tracking-tight">{isNew ? '✨ 新建文章' : '📝 编辑文章'}</h1>
+               <h1 className="text-lg font-bold text-foreground tracking-tight">{isNew ? '✨ 新建文章' : '📝 编辑文章'}</h1>
             </div>
           </div>
           <div className="flex items-center gap-4">
              {!isNew && (
-               <button onClick={() => window.open(`/article/${id}`, '_blank')} className="px-5 py-2.5 rounded-2xl bg-white border border-slate-200 text-slate-600 hover:text-primary hover:border-primary transition-all font-bold text-xs">
+               <button onClick={() => window.open(`/article/${id}`, '_blank')} className="px-5 py-2.5 rounded-2xl bg-card border border-border text-muted-foreground hover:text-primary hover:border-primary transition-all font-bold text-xs">
                  预览文章
                </button>
              )}
@@ -131,14 +131,14 @@ export default function EditArticle() {
       </motion.div>
 
       <div className="max-w-6xl mx-auto px-6">
-        <form onSubmit={handleSubmit} className="bg-white rounded-[2.5rem] border border-slate-200 shadow-xl overflow-hidden mb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <form onSubmit={handleSubmit} className="bg-card rounded-[2.5rem] border border-border shadow-xl overflow-hidden mb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
           {/* 1. Title Section */}
           <section className="px-10 py-6 space-y-4">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
                 <Command size={18} />
               </div>
-              <label className="text-sm font-bold text-slate-800">文章标题</label>
+              <label className="text-sm font-bold text-foreground">文章标题</label>
             </div>
             <input 
               type="text"
@@ -146,7 +146,7 @@ export default function EditArticle() {
               value={formData.title} 
               onChange={handleChange} 
               placeholder="请输入极具吸引力的标题..."
-              className="w-full bg-slate-50 border-2 border-transparent focus:border-primary/20 focus:bg-white rounded-2xl px-6 py-4 text-xl font-bold text-slate-900 transition-all focus:outline-none placeholder:text-slate-300"
+              className="w-full bg-muted/20 border-2 border-transparent focus:border-primary/20 focus:bg-card rounded-2xl px-6 py-4 text-xl font-bold text-foreground transition-all focus:outline-none placeholder:text-muted-foreground/30"
             />
           </section>
 
@@ -156,7 +156,7 @@ export default function EditArticle() {
                 <div className="w-9 h-9 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center">
                    <Zap size={18} />
                 </div>
-                <label className="text-sm font-bold text-slate-800">选择分类</label>
+                 <label className="text-sm font-bold text-foreground">选择分类</label>
              </div>
              <div className="flex flex-wrap gap-2">
                 {categories.map(cat => (
@@ -166,8 +166,8 @@ export default function EditArticle() {
                     onClick={() => setFormData(p => ({...p, categoryId: cat.id}))}
                     className={`px-4 py-2 rounded-xl text-[0.65rem] font-bold tracking-tight transition-all border-2 
                       ${formData.categoryId === cat.id 
-                        ? 'bg-slate-800 text-white border-slate-800 shadow-sm' 
-                        : 'bg-white text-slate-400 border-slate-100 hover:text-slate-600 hover:bg-slate-50'}`}
+                        ? 'bg-primary text-white border-primary shadow-sm' 
+                        : 'bg-card text-muted-foreground border-border hover:text-foreground hover:bg-muted'}`}
                   >
                     {cat.name}
                   </button>
@@ -181,7 +181,7 @@ export default function EditArticle() {
                 <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
                    <ImageIcon size={18} />
                 </div>
-                <label className="text-sm font-bold text-slate-800">设定标签</label>
+                 <label className="text-sm font-bold text-foreground">设定标签</label>
              </div>
              <div className="flex flex-wrap gap-2">
                 {allTags.map(tag => {
@@ -198,8 +198,8 @@ export default function EditArticle() {
                       }}
                       className={`px-4 py-2 rounded-xl text-[0.65rem] font-bold tracking-tight transition-all border-2
                         ${isSelected 
-                          ? 'bg-slate-800 text-white border-slate-800 shadow-sm' 
-                          : 'bg-white text-slate-400 border-slate-100 hover:text-slate-600 hover:bg-slate-50'}`}
+                        ? 'bg-primary text-white border-primary shadow-sm' 
+                        : 'bg-card text-muted-foreground border-border hover:text-foreground hover:bg-muted'}`}
                     >
                       #{tag.name}
                     </button>
@@ -215,7 +215,7 @@ export default function EditArticle() {
                    <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
                       <Zap size={18} />
                    </div>
-                   <label className="text-sm font-bold text-slate-800">正文内容创作</label>
+                    <label className="text-sm font-bold text-foreground">正文内容创作</label>
                 </div>
              </div>
              <div className="flex-1 px-2">
@@ -224,23 +224,24 @@ export default function EditArticle() {
                  onChange={(val) => setFormData(p => ({...p, content: val || ''}))}
                  height={800}
                  preview="edit"
+                 data-color-mode={colorMode}
                  className="!bg-transparent !border-none !shadow-none h-full"
                  visibleDragbar={false}
                />
              </div>
              
-             <div className="p-10 flex items-center justify-between">
-                <p className="text-[0.65rem] font-bold text-slate-300 uppercase tracking-[0.3em]">
+              <div className="p-10 flex items-center justify-between">
+                <p className="text-[0.65rem] font-bold text-muted-foreground/30 uppercase tracking-[0.3em]">
                    Crafting Excellence
                 </p>
-                <div className="text-[0.6rem] font-medium text-slate-400 italic">
+                <div className="text-[0.6rem] font-medium text-muted-foreground/40 italic">
                    "Quality of thought determines quality of life."
                 </div>
-             </div>
+              </div>
           </section>
         </form>
 
-        <footer className="py-12 text-center text-slate-300 text-[0.6rem] font-bold tracking-[0.5em] uppercase">
+        <footer className="py-12 text-center text-muted-foreground/20 text-[0.6rem] font-bold tracking-[0.5em] uppercase">
            The Atelier Framework v2.0
         </footer>
       </div>

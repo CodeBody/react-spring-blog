@@ -1,37 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useBlog } from '../../context/BlogContext';
 import KnowledgePlanet from '../../components/common/KnowledgePlanet';
 
 export default function KnowledgePlanetPage() {
-  const { categories } = useBlog();
+  const { categories, fetchCategories } = useBlog();
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   return (
-    <div className="w-full min-h-[calc(100vh-80px)] bg-black pt-20">
-      <div className="max-w-6xl mx-auto px-6 lg:px-8 mb-8 text-center">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <h1 className="font-display text-[4rem] font-bold text-white tracking-[0.2em] uppercase mb-4">
-            GALAXY
-          </h1>
-          <p className="text-gray-400 font-sans tracking-[0.3em] text-xs uppercase opacity-60">
-            Interactive 3D Knowledge Map • Powered by WebGL
-          </p>
-        </motion.div>
-      </div>
-
-      <div className="w-full h-[700px]">
+    <div className="w-full h-screen bg-black relative overflow-hidden">
+      {/* Immersive 3D Galaxy Canvas */}
+      <div className="absolute inset-0 z-0">
          <KnowledgePlanet categories={categories} />
       </div>
 
-      <div className="max-w-4xl mx-auto px-6 py-12 text-center">
-        <p className="text-gray-500 font-sans leading-loose tracking-widest text-sm">
-           拖动鼠标旋转银河 • 点击星球进入特定领域探索细节
-        </p>
-      </div>
+      {/* Corner Accents */}
+      <div className="absolute top-0 right-0 w-64 h-64 border-t border-r border-white/5 pointer-events-none transition-opacity duration-1000"></div>
+      <div className="absolute bottom-0 left-0 w-64 h-64 border-b border-l border-white/5 pointer-events-none transition-opacity duration-1000"></div>
     </div>
   );
 }

@@ -100,7 +100,7 @@ export default function AdminLayout() {
           <div className="mt-6 pt-6 border-t border-border/40">
             <div className="flex items-center gap-3 px-2 mb-6">
               <div className="w-10 h-10 rounded-2xl border-2 border-background overflow-hidden bg-muted p-0 shadow-sm">
-                <img src={profile?.avatar || `https://api.dicebear.com/7.x/notionists/svg?seed=${profile?.name || 'Admin'}`} alt="Avatar" className="w-full h-full object-cover" />
+                <img src={profile?.avatar || "/assets/images/avatar-default.svg"} alt="Avatar" className="w-full h-full object-cover" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-[0.7rem] font-bold truncate tracking-tight">{profile?.name || '管理员'}</p>

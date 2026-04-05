@@ -157,7 +157,7 @@ export default function FrontendLayout() {
       <main className="flex-1 w-full relative">
         <Outlet />
       </main>
-      <Footer />
+      {location.pathname !== '/planet' && <Footer />}
     </div>
   );
 }

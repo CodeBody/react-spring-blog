@@ -17,6 +17,7 @@ import {
   createArticle, 
   updateArticleApi, 
   deleteArticleApi, 
+  fetchArticleById,
   fetchAdminProfile,
   fetchDashboardStats 
 } from '../utils/api';

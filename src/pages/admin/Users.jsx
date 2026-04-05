@@ -179,7 +179,7 @@ export default function Users() {
                 <div className="relative">
                    <div className="absolute inset-0 bg-primary/20 rounded-full blur-2xl group-hover:bg-primary/30 transition-colors duration-700" />
                    <div className="w-24 h-24 rounded-[2.5rem] border-2 border-background overflow-hidden bg-muted/20 p-1 project-shadow relative z-10">
-                    <img src={user.avatar || `https://api.dicebear.com/7.x/notionists/svg?seed=${user.username}`} alt="Avatar" className="w-full h-full object-cover rounded-[2rem] grayscale group-hover:grayscale-0 transition-all duration-1000 scale-110 group-hover:scale-100" />
+                    <img src={user.avatar || "/assets/images/avatar-default.svg"} alt="Avatar" className="w-full h-full object-cover rounded-[2rem] grayscale group-hover:grayscale-0 transition-all duration-1000 scale-110 group-hover:scale-100" />
                   </div>
                 </div>
                 <div className="overflow-hidden flex-1 relative z-10 w-full">

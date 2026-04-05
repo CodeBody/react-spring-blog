@@ -39,8 +39,8 @@ export default function Login() {
           className="w-full h-full relative"
         >
           <img 
-            src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop" 
-            alt="Atmospheric Background" 
+            src="/assets/images/login-abstract.jpg" 
+            alt="Login Background" 
             className="w-full h-full object-cover opacity-40"
           />
           <div className="absolute inset-0 bg-gradient-to-br from-[#050505] via-transparent to-[#050505]/80" />
