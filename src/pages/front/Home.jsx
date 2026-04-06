@@ -66,7 +66,7 @@ export default function Home() {
   const location = useLocation();
   const navigate = useNavigate();
   const { categoryId } = useParams();
-  const { articles, categories, fetchArticles, fetchCategories, showToast } = useBlog();
+  const { articles, totalArticles, categories, fetchArticles, fetchCategories, showToast } = useBlog();
   
   const isAllArticles = location.pathname === '/articles';
   const isCategoryFilter = !!categoryId;
@@ -115,10 +115,12 @@ export default function Home() {
       })
     : publishedArticles;
 
-  const totalPages = Math.ceil(filteredArticles.length / ITEMS_PER_PAGE);
+  const totalPages = isAllArticles || isCategoryFilter
+    ? Math.ceil(totalArticles / ITEMS_PER_PAGE)
+    : 1;
 
   const displayedArticles = isAllArticles || isCategoryFilter
-    ? filteredArticles.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
+    ? filteredArticles
     : publishedArticles.slice(0, 6);
 
   const handleSubscribe = (e) => {

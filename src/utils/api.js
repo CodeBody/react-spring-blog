@@ -32,12 +32,15 @@ export const fetchAdminArticles = async (page = 1, size = 50, categoryId = null)
     const res = await fetchWithAuth(url); 
     const data = await res.json(); 
     if (data.code === 200) { 
-      return data.data.records.map(adaptArticle); 
+      return {
+        records: data.data.records.map(adaptArticle),
+        total: data.data.total
+      }; 
     } 
   } catch (error) { 
     console.error("Fetch admin articles error:", error); 
   } 
-  return []; 
+  return { records: [], total: 0 }; 
 }; 
 
 export const fetchArticles = async (page = 1, size = 50, categoryId = null) => {
@@ -47,12 +50,15 @@ export const fetchArticles = async (page = 1, size = 50, categoryId = null) => {
     const res = await fetch(url);
     const data = await res.json();
     if (data.code === 200) {
-      return data.data.records.map(adaptArticle);
+      return {
+        records: data.data.records.map(adaptArticle),
+        total: data.data.total
+      };
     }
   } catch (error) {
     console.error('Fetch articles error:', error);
   }
-  return [];
+  return { records: [], total: 0 };
 };
 
 export const fetchAdminArticleById = async (id) => {

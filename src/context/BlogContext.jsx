@@ -36,6 +36,7 @@ export const BlogProvider = ({ children }) => {
   const [profile, setProfile] = useState({});
   const [dashboardStats, setDashboardStats] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [totalArticles, setTotalArticles] = useState(0);
   const [toasts, setToasts] = useState([]);
 
   const showToast = (message, type = 'success', duration = 3000) => {
@@ -54,7 +55,8 @@ export const BlogProvider = ({ children }) => {
   const fetchArticlesData = async (page = 1, size = 50, catId = null) => {
     setLoading(true);
     const data = await fetchArticles(page, size, catId);
-    setArticles(data);
+    setArticles(data.records);
+    setTotalArticles(data.total);
     setLoading(false);
   };
 
@@ -206,7 +208,7 @@ export const BlogProvider = ({ children }) => {
 
   return (
     <BlogContext.Provider value={{ 
-      articles, categories, tags, users, profile, dashboardStats, loading,
+      articles, totalArticles, categories, tags, users, profile, dashboardStats, loading,
       addArticle, updateArticle, deleteArticle,
       addCategory, updateCategory, deleteCategory,
       addTag, updateTag, deleteTag,
@@ -216,7 +218,8 @@ export const BlogProvider = ({ children }) => {
       fetchAdminArticles: async (page = 1, size = 50, catId = null) => {
         setLoading(true);
         const data = await fetchAdminArticles(page, size, catId);
-        setArticles(data || []);
+        setArticles(data.records || []);
+        setTotalArticles(data.total || 0);
         setLoading(false);
       },
       fetchCategories: fetchCategoriesData,
