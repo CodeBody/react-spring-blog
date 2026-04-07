@@ -19,7 +19,7 @@ public class AdminArticleController {
     @GetMapping
     public Result<Page<Article>> list(
             @RequestParam(defaultValue = "1") Integer page,
-            @RequestParam(defaultValue = "10") Integer size,
+            @RequestParam(defaultValue = "5") Integer size,
             @RequestParam(required = false) Long categoryId,
             @RequestParam(required = false) Integer status) {
             

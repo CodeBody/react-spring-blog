@@ -25,7 +25,7 @@ const fetchWithAuth = async (url, options = {}) => {
   return response;
 };
 
-export const fetchAdminArticles = async (page = 1, size = 50, categoryId = null) => { 
+export const fetchAdminArticles = async (page = 1, size = 10, categoryId = null) => { 
   try { 
     let url = `/api/admin/articles?page=${page}&size=${size}`; 
     if (categoryId) url += `&categoryId=${categoryId}`; 

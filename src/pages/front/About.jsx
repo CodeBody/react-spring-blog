@@ -5,13 +5,10 @@ import { FaGithub, FaTwitter, FaLinkedin } from 'react-icons/fa';
 import { Card, CardContent } from '../../components/common/Card';
 
 export default function About() {
-  const { profile, fetchProfile } = useBlog();
-
-  useEffect(() => {
-    fetchProfile();
-  }, []);
+  const { profile } = useBlog();
 
   return (
+
     <div className="max-w-3xl mx-auto px-6 lg:px-8 w-full pt-32 pb-12 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out">
       <div className="flex flex-col md:flex-row items-center gap-12 mb-16">
         <div className="w-48 h-48 md:w-56 md:h-56 rounded-full overflow-hidden border-4 border-border shrink-0 shadow-lg">

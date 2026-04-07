@@ -38,6 +38,11 @@ export const BlogProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [totalArticles, setTotalArticles] = useState(0);
   const [toasts, setToasts] = useState([]);
+  
+  useEffect(() => {
+    fetchProfileData();
+  }, []);
+
 
   const showToast = (message, type = 'success', duration = 3000) => {
     const id = Date.now();
@@ -215,7 +220,7 @@ export const BlogProvider = ({ children }) => {
       addUser, updateUser, deleteUser,
       fetchUsers, 
       fetchArticles: fetchArticlesData,
-      fetchAdminArticles: async (page = 1, size = 50, catId = null) => {
+      fetchAdminArticles: async (page = 1, size = 5, catId = null) => {
         setLoading(true);
         const data = await fetchAdminArticles(page, size, catId);
         setArticles(data.records || []);

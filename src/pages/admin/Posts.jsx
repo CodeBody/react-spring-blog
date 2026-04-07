@@ -13,17 +13,21 @@ import {
 import { motion } from 'framer-motion';
 import { formatDate } from '../../utils';
 import ConfirmModal from '../../components/common/ConfirmModal';
+import { Pagination } from '../../components/common/Pagination';
 
 export default function Posts() {
-  const { articles, deleteArticle, fetchAdminArticles, showToast } = useBlog();
+  const { articles, totalArticles, deleteArticle, fetchAdminArticles, showToast } = useBlog();
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
   const [selectedIds, setSelectedIds] = useState([]);
   const [modal, setModal] = useState({ isOpen: false, title: '', message: '', onConfirm: () => {} });
 
+  const pageSize = 5;
+
   useEffect(() => {
-    fetchAdminArticles();
-  }, []);
+    fetchAdminArticles(currentPage, pageSize);
+  }, [currentPage]);
 
   const filtered = articles.filter(a => 
     a.title.toLowerCase().includes(search.toLowerCase())
@@ -87,7 +91,7 @@ export default function Posts() {
           <h1 className="text-4xl font-display font-black tracking-tight mb-2 text-gradient">文章列表</h1>
           <p className="text-muted-foreground text-xs font-semibold tracking-wide flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-            管理、编辑及发布您的所有内容 · 共 {articles.length} 篇
+            管理、编辑及发布您的所有内容 · 共 {totalArticles} 篇
           </p>
         </div>
         
@@ -249,6 +253,17 @@ export default function Posts() {
           </table>
         </div>
         
+        {/* Pagination Area */}
+        {totalArticles > pageSize && (
+          <div className="px-8 py-2 border-t border-border/30 bg-muted/10">
+            <Pagination 
+              currentPage={currentPage}
+              totalPages={Math.ceil(totalArticles / pageSize)}
+              onPageChange={(page) => setCurrentPage(page)}
+            />
+          </div>
+        )}
+
         {/* Footer info */}
         <div className="px-8 py-6 border-t border-border/30 bg-muted/10 text-center">
            <p className="text-[0.6rem] font-black uppercase tracking-[0.3em] text-muted-foreground/30">End of Content Ledger</p>
