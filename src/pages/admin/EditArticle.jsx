@@ -104,48 +104,56 @@ export default function EditArticle() {
 
 
   return (
-    <div className="min-h-screen bg-background pb-32">
-      {/* Boutique Studio Header */}
-      <motion.div 
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="sticky top-0 z-50 bg-card/80 backdrop-blur-xl border-b border-border py-4 mb-10"
-      >
-        <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <Link to="/admin/posts" className="w-10 h-10 flex items-center justify-center rounded-2xl bg-muted hover:bg-primary hover:text-white transition-all group">
-              <ArrowLeft size={20} className="group-hover:-translate-x-0.5 transition-transform" />
-            </Link>
-            <div>
-               <h1 className="text-lg font-bold text-foreground tracking-tight">{isNew ? '✨ 新建文章' : '📝 编辑文章'}</h1>
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-             {!isNew && (
-               <button onClick={() => window.open(`/article/${id}`, '_blank')} className="px-5 py-2.5 rounded-2xl bg-card border border-border text-muted-foreground hover:text-primary hover:border-primary transition-all font-bold text-xs">
-                 预览文章
-               </button>
-             )}
-             <button 
-               onClick={handleSubmit} 
-               className="px-8 py-2.5 bg-primary text-white rounded-2xl text-xs font-bold shadow-lg shadow-primary/25 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center gap-2"
-             >
-               <Save size={18} />
-               {isNew ? '立即发布' : '同步更新'}
-             </button>
-          </div>
+    <div className="space-y-10 pb-20">
+      {/* Page Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 pt-2">
+        <div>
+          <h1 className="text-4xl font-display font-black tracking-tight mb-2 text-gradient">
+            {isNew ? '新建文章' : '编辑文章'}
+          </h1>
+          <p className="text-muted-foreground text-xs font-semibold tracking-wide flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+            {isNew ? '创作并发布您的下一篇精彩博客内容' : `正在编辑文章 · ${formData.title || '标题加载中...'}`}
+          </p>
         </div>
-      </motion.div>
+        
+        <div className="flex items-center gap-3">
+          <Link 
+            to="/admin/posts" 
+            className="px-5 py-2.5 bg-muted text-muted-foreground rounded-xl text-xs font-bold tracking-wide hover:bg-muted/80 transition-all flex items-center gap-2 border border-border/50"
+          >
+            <ArrowLeft size={16} />
+            返回列表
+          </Link>
+          {!isNew && (
+            <button 
+              onClick={() => window.open(`/article/${id}`, '_blank')} 
+              className="px-5 py-2.5 bg-card border border-border/50 text-muted-foreground hover:text-primary hover:border-primary/30 rounded-xl text-xs font-bold tracking-wide transition-all flex items-center gap-2 shadow-sm"
+            >
+              <Eye size={16} />
+              预览内容
+            </button>
+          )}
+          <button 
+            onClick={handleSubmit} 
+            className="px-6 py-2.5 bg-primary text-primary-foreground rounded-xl text-xs font-bold tracking-wide shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2"
+          >
+            <Save size={16} strokeWidth={3} />
+            {isNew ? '立即发布' : '同步更新'}
+          </button>
+        </div>
+      </div>
 
-      <div className="max-w-6xl mx-auto px-6">
-        <form onSubmit={handleSubmit} className="bg-card rounded-[2.5rem] border border-border shadow-xl overflow-hidden mb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        {/* Main Content Area: Title & Editor */}
+        <div className="lg:col-span-8 space-y-8">
           {/* 1. Title Section */}
-          <section className="px-10 py-6 space-y-4">
+          <section className="bg-card rounded-[2.5rem] border border-border shadow-xl px-10 py-8 space-y-6">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
-                <Command size={18} />
+              <div className="w-10 h-10 rounded-2xl bg-blue-500/10 text-blue-600 flex items-center justify-center">
+                <Command size={20} />
               </div>
-              <label className="text-sm font-bold text-foreground">文章标题</label>
+              <label className="text-sm font-bold uppercase tracking-widest text-foreground/60">博文标题</label>
             </div>
             <input 
               type="text"
@@ -153,105 +161,121 @@ export default function EditArticle() {
               value={formData.title} 
               onChange={handleChange} 
               placeholder="请输入极具吸引力的标题..."
-              className="w-full bg-muted/20 border-2 border-transparent focus:border-primary/20 focus:bg-card rounded-2xl px-6 py-4 text-xl font-bold text-foreground transition-all focus:outline-none placeholder:text-muted-foreground/30"
+              className="w-full bg-muted/20 border-2 border-transparent focus:border-primary/20 focus:bg-card rounded-2xl px-6 py-5 text-2xl font-display font-black text-foreground transition-all focus:outline-none placeholder:text-muted-foreground/20"
             />
           </section>
 
-          {/* 2. Category Section */}
-          <section className="px-10 py-6 space-y-4">
-             <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center">
-                   <Zap size={18} />
+          {/* 2. The Content Canvas */}
+          <section className="bg-card rounded-[2.5rem] border border-border shadow-xl overflow-hidden min-h-[850px] flex flex-col">
+            <div className="px-10 py-8 border-b border-border/50 bg-muted/10 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
+                  <Zap size={20} />
                 </div>
-                 <label className="text-sm font-bold text-foreground">选择分类</label>
-             </div>
-             <div className="flex flex-wrap gap-2">
-                {categories.map(cat => (
-                  <button
-                    key={cat.id}
-                    type="button"
-                    onClick={() => setFormData(p => ({...p, categoryId: cat.id}))}
-                    className={`px-4 py-2 rounded-xl text-[0.65rem] font-bold tracking-tight transition-all border 
-                      ${String(formData.categoryId) === String(cat.id) 
-                        ? 'bg-primary text-white border-primary shadow-sm' 
-                        : 'bg-card text-muted-foreground border-border hover:text-foreground hover:bg-muted'}`}
-                  >
-                    {cat.name}
-                  </button>
-                ))}
-             </div>
-          </section>
-
-          {/* 3. Tags Section */}
-          <section className="px-10 py-6 space-y-4">
-             <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
-                   <ImageIcon size={18} />
-                </div>
-                 <label className="text-sm font-bold text-foreground">设定标签</label>
-             </div>
-             <div className="flex flex-wrap gap-2">
-                {allTags.map(tag => {
-                  const isSelected = formData.tags.includes(tag.name);
-                  return (
-                    <button
-                      key={tag.id}
-                      type="button"
-                      onClick={() => {
-                        setFormData(p => ({
-                          ...p,
-                          tags: isSelected ? p.tags.filter(t => t !== tag.name) : [...p.tags, tag.name]
-                        }))
-                      }}
-                      className={`px-4 py-2 rounded-xl text-[0.65rem] font-bold tracking-tight transition-all border
-                        ${isSelected 
-                        ? 'bg-primary text-white border-primary shadow-sm' 
-                        : 'bg-card text-muted-foreground border-border hover:text-foreground hover:bg-muted'}`}
-                    >
-                      #{tag.name}
-                    </button>
-                  );
-                })}
-             </div>
-          </section>
-
-          {/* 4. The Content Canvas */}
-          <section className="min-h-[850px] relative flex flex-col">
-             <div className="px-10 py-6">
-                <div className="flex items-center gap-3">
-                   <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                      <Zap size={18} />
-                   </div>
-                    <label className="text-sm font-bold text-foreground">正文内容创作</label>
-                </div>
-             </div>
-             <div className="flex-1 px-2">
-               <MDEditor
-                 value={formData.content}
-                 onChange={(val) => setFormData(p => ({...p, content: val || ''}))}
-                 height={800}
-                 preview="edit"
-                 data-color-mode={colorMode}
-                 className="!bg-transparent !border-none !shadow-none h-full"
-                 visibleDragbar={false}
-               />
-             </div>
-             
-              <div className="p-10 flex items-center justify-between">
-                <p className="text-[0.65rem] font-bold text-muted-foreground/30 uppercase tracking-[0.3em]">
-                   Crafting Excellence
-                </p>
-                <div className="text-[0.6rem] font-medium text-muted-foreground/40 italic">
-                   "Quality of thought determines quality of life."
-                </div>
+                <label className="text-sm font-bold uppercase tracking-widest text-foreground/60">正文创作</label>
               </div>
+              <div className="flex items-center gap-2 text-[0.6rem] font-bold text-muted-foreground/40 uppercase tracking-widest bg-muted/20 px-3 py-1.5 rounded-lg border border-border/50">
+                 Markdown Support
+              </div>
+            </div>
+            <div className="flex-1 px-4 py-2">
+              <MDEditor
+                value={formData.content}
+                onChange={(val) => setFormData(p => ({...p, content: val || ''}))}
+                height={750}
+                preview="edit"
+                data-color-mode={colorMode}
+                className="!bg-transparent !border-none !shadow-none h-full"
+                visibleDragbar={false}
+              />
+            </div>
+            <div className="px-10 py-6 text-center border-t border-border/20 bg-muted/5 text-muted-foreground/20 text-[0.6rem] font-bold tracking-[0.4em] uppercase">
+                Focus Mode · Active
+            </div>
           </section>
-        </form>
+        </div>
 
-        <footer className="py-12 text-center text-muted-foreground/20 text-[0.6rem] font-bold tracking-[0.5em] uppercase">
-           The Atelier Framework v2.0
-        </footer>
-      </div>
+        {/* Side Column: Metadata & Settings */}
+        <div className="lg:col-span-4 space-y-8">
+          {/* Category Section */}
+          <section className="bg-card rounded-[2rem] border border-border shadow-lg p-8 space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-orange-500/10 text-orange-600 flex items-center justify-center">
+                <Zap size={18} />
+              </div>
+              <label className="text-xs font-black uppercase tracking-widest text-foreground/60">内容分类</label>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              {categories.map(cat => (
+                <button
+                  key={cat.id}
+                  type="button"
+                  onClick={() => setFormData(p => ({...p, categoryId: cat.id}))}
+                  className={`px-4 py-3 rounded-xl text-[0.65rem] font-bold tracking-tight transition-all border text-center
+                    ${String(formData.categoryId) === String(cat.id) 
+                      ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20' 
+                      : 'bg-card text-muted-foreground border-border/50 hover:text-foreground hover:bg-muted/50'}`}
+                >
+                  {cat.name}
+                </button>
+              ))}
+            </div>
+          </section>
+
+          {/* Tags Section */}
+          <section className="bg-card rounded-[2rem] border border-border shadow-lg p-8 space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-indigo-500/10 text-indigo-600 flex items-center justify-center">
+                <ImageIcon size={18} />
+              </div>
+              <label className="text-xs font-black uppercase tracking-widest text-foreground/60">关联标签</label>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {allTags.map(tag => {
+                const isSelected = formData.tags.includes(tag.name);
+                return (
+                  <button
+                    key={tag.id}
+                    type="button"
+                    onClick={() => {
+                      setFormData(p => ({
+                        ...p,
+                        tags: isSelected ? p.tags.filter(t => t !== tag.name) : [...p.tags, tag.name]
+                      }))
+                    }}
+                    className={`px-3.5 py-2 rounded-xl text-[0.6rem] font-bold tracking-tight transition-all border
+                      ${isSelected 
+                      ? 'bg-primary/10 text-primary border-primary/30' 
+                      : 'bg-card text-muted-foreground border-border/40 hover:text-foreground hover:bg-muted/50'}`}
+                  >
+                    #{tag.name}
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* Status & Help Section */}
+          <section className="bg-gradient-to-br from-primary/[0.03] to-transparent rounded-[2rem] border border-primary/10 p-8">
+             <div className="flex flex-col gap-4">
+                <div className="p-4 rounded-2xl bg-white/40 dark:bg-black/20 border border-border/40 backdrop-blur-sm">
+                   <p className="text-[0.65rem] font-black text-foreground/40 uppercase tracking-[0.2em] mb-2 text-center">发布状态</p>
+                   <div className="flex gap-2">
+                      <button onClick={() => setFormData(p => ({...p, status: 'published'}))} type="button" className={`flex-1 h-10 rounded-xl text-[0.6rem] font-bold transition-all ${formData.status === 'published' ? 'bg-emerald-500 text-white shadow-lg' : 'bg-muted/50 text-muted-foreground'}`}>{formData.status === 'published' ? '已排期发布' : '立即发布'}</button>
+                      <button onClick={() => setFormData(p => ({...p, status: 'draft'}))} type="button" className={`flex-1 h-10 rounded-xl text-[0.6rem] font-bold transition-all ${formData.status === 'draft' ? 'bg-amber-500 text-white shadow-lg' : 'bg-muted/50 text-muted-foreground'}`}>保存为草稿</button>
+                   </div>
+                </div>
+                <div className="text-center italic text-[0.6rem] font-medium text-muted-foreground/40 mt-4 leading-relaxed px-2">
+                  "Thoughtful content is the foundation of digital excellence."
+                </div>
+             </div>
+          </section>
+        </div>
+      </form>
+
+      <footer className="py-2 text-center text-muted-foreground/20 text-[0.6rem] font-bold tracking-[0.5em] uppercase">
+         The Atelier Framework v2.0
+      </footer>
     </div>
   );
 }

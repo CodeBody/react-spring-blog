@@ -92,147 +92,165 @@ export default function EditProject() {
   ];
 
   return (
-    <div className="min-h-screen bg-background pb-32">
-      <motion.div 
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="sticky top-0 z-50 bg-card/80 backdrop-blur-xl border-b border-border py-4 mb-10"
-      >
-        <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <Link to="/admin/projects" className="w-10 h-10 flex items-center justify-center rounded-2xl bg-muted hover:bg-primary hover:text-white transition-all group">
-              <ArrowLeft size={20} className="group-hover:-translate-x-0.5 transition-transform" />
-            </Link>
-            <div>
-               <h1 className="text-lg font-bold text-foreground tracking-tight">{isNew ? '🚀 新建项目' : '🛠️ 编辑项目'}</h1>
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-             <button 
-               onClick={handleSubmit} 
-               className="px-8 py-2.5 bg-primary text-white rounded-2xl text-xs font-bold shadow-lg shadow-primary/25 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center gap-2"
-             >
-               <Save size={18} />
-               {isNew ? '创建项目' : '保存修改'}
-             </button>
-          </div>
+    <div className="space-y-10 pb-20">
+      {/* Page Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 pt-2">
+        <div>
+          <h1 className="text-4xl font-display font-black tracking-tight mb-2 text-gradient">
+            {isNew ? '新建项目' : '编辑项目'}
+          </h1>
+          <p className="text-muted-foreground text-xs font-semibold tracking-wide flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+            {isNew ? '发布您的最新技术成果与项目实践' : `正在完善项目详情 · ${formData.title || '项目加载中...'}`}
+          </p>
         </div>
-      </motion.div>
-
-      <div className="max-w-6xl mx-auto px-6">
-        <form onSubmit={handleSubmit} className="bg-card rounded-[2.5rem] border border-border shadow-xl overflow-hidden mb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
-          
-          <div className="grid grid-cols-1 lg:grid-cols-3 divide-y lg:divide-y-0 lg:divide-x divide-border/50">
-            
-            <div className="lg:col-span-2 p-10 space-y-10">
-              {/* Title Input */}
-              <section className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
-                    <Type size={18} />
-                  </div>
-                  <label className="text-sm font-bold text-foreground">项目名称</label>
-                </div>
-                <input 
-                  type="text"
-                  name="title" 
-                  value={formData.title} 
-                  onChange={handleChange} 
-                  placeholder="项目名称..."
-                  className="w-full bg-muted/20 border-2 border-transparent focus:border-primary/20 focus:bg-card rounded-2xl px-6 py-4 text-xl font-bold text-foreground transition-all focus:outline-none placeholder:text-muted-foreground/30"
-                />
-              </section>
-
-              {/* Description Editor */}
-              <section className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                    <Palette size={18} />
-                  </div>
-                  <label className="text-sm font-bold text-foreground">项目详细描述 (Markdown)</label>
-                </div>
-                <div data-color-mode={colorMode}>
-                  <MDEditor
-                    value={formData.description}
-                    onChange={(val) => setFormData(p => ({...p, description: val || ''}))}
-                    height={400}
-                    preview="edit"
-                    className="!bg-transparent !border-2 !border-muted/20 !rounded-2xl overflow-hidden"
-                  />
-                </div>
-              </section>
-            </div>
-
-            <div className="p-10 bg-muted/5 space-y-10">
-              {/* GitHub Link */}
-              <section className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <Github size={18} className="text-muted-foreground" />
-                  <label className="text-xs font-black uppercase tracking-widest text-muted-foreground/60">GitHub URL</label>
-                </div>
-                <input 
-                  type="text"
-                  name="githubUrl" 
-                  value={formData.githubUrl} 
-                  onChange={handleChange} 
-                  className="w-full bg-background border border-border px-4 py-3 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-                  placeholder="https://github.com/..."
-                />
-              </section>
-
-              {/* Demo Link */}
-              <section className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <Globe size={18} className="text-muted-foreground" />
-                  <label className="text-xs font-black uppercase tracking-widest text-muted-foreground/60">Demo URL</label>
-                </div>
-                <input 
-                  type="text"
-                  name="demoUrl" 
-                  value={formData.demoUrl} 
-                  onChange={handleChange} 
-                  className="w-full bg-background border border-border px-4 py-3 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-                  placeholder="https://test.com"
-                />
-              </section>
-
-              {/* Tags */}
-              <section className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <Hash size={18} className="text-muted-foreground" />
-                  <label className="text-xs font-black uppercase tracking-widest text-muted-foreground/60">技术标签 (英文逗号分隔)</label>
-                </div>
-                <input 
-                  type="text"
-                  name="tags" 
-                  value={formData.tags} 
-                  onChange={handleChange} 
-                  className="w-full bg-background border border-border px-4 py-3 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-                  placeholder="React,Nodejs,Typescript"
-                />
-              </section>
-
-              {/* Color Presets */}
-              <section className="space-y-4">
-                <label className="text-xs font-black uppercase tracking-widest text-muted-foreground/60 block mb-4">卡片渐变氛围</label>
-                <div className="grid grid-cols-2 gap-3">
-                   {colorPresets.map(preset => (
-                     <button
-                       key={preset.value}
-                       type="button"
-                       onClick={() => setFormData(p => ({...p, color: preset.value}))}
-                       className={`h-12 rounded-xl border-2 transition-all overflow-hidden relative ${formData.color === preset.value ? 'border-primary ring-2 ring-primary/20' : 'border-transparent opacity-80 hover:opacity-100'}`}
-                     >
-                        <div className={`absolute inset-0 bg-gradient-to-br ${preset.value}`} />
-                        <span className="relative z-10 text-[0.6rem] font-bold text-white drop-shadow-sm">{preset.name}</span>
-                     </button>
-                   ))}
-                </div>
-              </section>
-            </div>
-          </div>
-        </form>
+        
+        <div className="flex items-center gap-3">
+          <Link 
+            to="/admin/projects" 
+            className="px-5 py-2.5 bg-muted text-muted-foreground rounded-xl text-xs font-bold tracking-wide hover:bg-muted/80 transition-all flex items-center gap-2 border border-border/50"
+          >
+            <ArrowLeft size={16} />
+            返回列表
+          </Link>
+          <button 
+            onClick={handleSubmit} 
+            className="px-6 py-2.5 bg-primary text-primary-foreground rounded-xl text-xs font-bold tracking-wide shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2"
+          >
+            <Save size={16} strokeWidth={3} />
+            {isNew ? '立即创建' : '保存修改'}
+          </button>
+        </div>
       </div>
+
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        
+        {/* Main Content Area */}
+        <div className="lg:col-span-8 space-y-8">
+          {/* 1. Name Section */}
+          <section className="bg-card rounded-[2.5rem] border border-border shadow-xl p-10 space-y-8">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-blue-500/10 text-blue-600 flex items-center justify-center">
+                <Type size={20} />
+              </div>
+              <label className="text-sm font-bold uppercase tracking-widest text-foreground/60">项目标识名称</label>
+            </div>
+            <input 
+              type="text"
+              name="title" 
+              value={formData.title} 
+              onChange={handleChange} 
+              placeholder="请输入项目名称..."
+              className="w-full bg-muted/20 border-2 border-transparent focus:border-primary/20 focus:bg-card rounded-2xl px-6 py-5 text-2xl font-display font-black text-foreground transition-all focus:outline-none placeholder:text-muted-foreground/30"
+            />
+          </section>
+
+          {/* 2. Description Section */}
+          <section className="bg-card rounded-[2.5rem] border border-border shadow-xl p-10 space-y-8">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
+                <Palette size={20} />
+              </div>
+              <label className="text-sm font-bold uppercase tracking-widest text-foreground/60">项目深度描述 (Markdown)</label>
+            </div>
+            <div data-color-mode={colorMode} className="rounded-2xl overflow-hidden border border-border/50">
+              <MDEditor
+                value={formData.description}
+                onChange={(val) => setFormData(p => ({...p, description: val || ''}))}
+                height={550}
+                preview="edit"
+                className="!bg-transparent !border-none !shadow-none"
+              />
+            </div>
+          </section>
+        </div>
+
+        {/* Side Column: Metadata & Atmos */}
+        <div className="lg:col-span-4 space-y-8">
+          {/* Metadata Links */}
+          <section className="bg-card rounded-[2rem] border border-border shadow-lg p-8 space-y-8">
+            <div className="flex items-center gap-3 px-1">
+               <Globe size={18} className="text-primary" />
+               <h3 className="text-xs font-black uppercase tracking-widest text-foreground/60">资源访问链接</h3>
+            </div>
+            
+            <div className="space-y-6">
+               <div className="space-y-2">
+                  <div className="flex items-center gap-2 px-1">
+                    <Github size={14} className="text-muted-foreground" />
+                    <span className="text-[0.6rem] font-bold uppercase tracking-widest text-muted-foreground/50">GitHub Repository</span>
+                  </div>
+                  <input 
+                    type="text"
+                    name="githubUrl" 
+                    value={formData.githubUrl} 
+                    onChange={handleChange} 
+                    className="w-full bg-muted/20 border border-border/40 px-4 py-3 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-mono"
+                    placeholder="https://github.com/..."
+                  />
+               </div>
+
+               <div className="space-y-2">
+                  <div className="flex items-center gap-2 px-1">
+                    <Globe size={14} className="text-muted-foreground" />
+                    <span className="text-[0.6rem] font-bold uppercase tracking-widest text-muted-foreground/50">Live Demo URL</span>
+                  </div>
+                  <input 
+                    type="text"
+                    name="demoUrl" 
+                    value={formData.demoUrl} 
+                    onChange={handleChange} 
+                    className="w-full bg-muted/20 border border-border/40 px-4 py-3 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-mono"
+                    placeholder="https://preview.com"
+                  />
+               </div>
+            </div>
+          </section>
+
+          {/* Tags Section */}
+          <section className="bg-card rounded-[2rem] border border-border shadow-lg p-8 space-y-6">
+            <div className="flex items-center gap-3 px-1">
+               <Hash size={18} className="text-indigo-500" />
+               <h3 className="text-xs font-black uppercase tracking-widest text-foreground/60">技术栈标签</h3>
+            </div>
+            <div className="space-y-3">
+              <input 
+                type="text"
+                name="tags" 
+                value={formData.tags} 
+                onChange={handleChange} 
+                className="w-full bg-muted/20 border border-border/40 px-4 py-3 rounded-xl text-xs font-bold tracking-wide focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                placeholder="例如: React, Node.js, Tailwind..."
+              />
+              <p className="px-1 text-[0.55rem] font-medium text-muted-foreground/40 italic">
+                提示：使用英文逗号进行标签分隔
+              </p>
+            </div>
+          </section>
+
+          {/* Atmosphere Preset */}
+          <section className="bg-card rounded-[2rem] border border-border shadow-lg p-8 space-y-6">
+            <div className="flex items-center gap-3 px-1">
+               <Palette size={18} className="text-amber-500" />
+               <h3 className="text-xs font-black uppercase tracking-widest text-foreground/60">卡片视觉氛围</h3>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+               {colorPresets.map(preset => (
+                 <button
+                   key={preset.value}
+                   type="button"
+                   onClick={() => setFormData(p => ({...p, color: preset.value}))}
+                   className={`h-16 rounded-2xl border-2 transition-all overflow-hidden relative group ${formData.color === preset.value ? 'border-primary ring-2 ring-primary/10 scale-105' : 'border-border/30 opacity-60 hover:opacity-100'}`}
+                 >
+                    <div className={`absolute inset-0 bg-gradient-to-br ${preset.value} group-hover:scale-110 transition-transform duration-500`} />
+                    <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors" />
+                    <span className="relative z-10 text-[0.55rem] font-black text-white px-2 drop-shadow-md uppercase tracking-tighter leading-none">{preset.name}</span>
+                 </button>
+               ))}
+            </div>
+          </section>
+        </div>
+      </form>
     </div>
   );
 }
