@@ -11,6 +11,11 @@ import {
   updateTag as updateTagApi,
   deleteTag as deleteTagApi,
   fetchAllUsers,
+  fetchAdminProjects,
+  fetchAdminProjectById,
+  createProject as createProjectApi,
+  updateProject as updateProjectApi,
+  deleteProject as deleteProjectApi,
   createUser,
   updateUser as updateUserApi,
   deleteUser as deleteUserApi,
@@ -21,6 +26,7 @@ import {
   fetchAdminArticleById,
   fetchAdminArticles,
   fetchAdminProfile,
+  fetchProjects,
   fetchDashboardStats 
 } from '../utils/api';
 
@@ -32,6 +38,8 @@ export const BlogProvider = ({ children }) => {
   const [articles, setArticles] = useState([]);
   const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);
+  const [projects, setProjects] = useState([]);
+  const [totalProjects, setTotalProjects] = useState(0);
   const [users, setUsers] = useState([]);
   const [profile, setProfile] = useState({});
   const [dashboardStats, setDashboardStats] = useState(null);
@@ -116,6 +124,31 @@ export const BlogProvider = ({ children }) => {
     setDashboardStats(stats);
   };
 
+  const fetchProjectsData = async () => {
+    setLoading(true);
+    const data = await fetchProjects();
+    setProjects(data || []);
+    setLoading(false);
+  };
+
+  const addProject = async (project) => {
+    const res = await createProjectApi(project);
+    if(res.code === 200) await fetchProjectsData();
+    return res;
+  };
+
+  const updateProjectAction = async (project) => {
+    const res = await updateProjectApi(project);
+    if(res.code === 200) await fetchProjectsData();
+    return res;
+  };
+
+  const deleteProjectAction = async (id) => {
+    const res = await deleteProjectApi(id);
+    if(res.code === 200) await fetchProjectsData();
+    return res;
+  };
+   
   const fetchProfileData = async () => {
     const adminProfile = await fetchAdminProfile();
     if (adminProfile) {
@@ -213,7 +246,8 @@ export const BlogProvider = ({ children }) => {
 
   return (
     <BlogContext.Provider value={{ 
-      articles, totalArticles, categories, tags, users, profile, dashboardStats, loading,
+      articles, totalArticles, categories, tags, projects, totalProjects, users, profile, dashboardStats, loading,
+
       addArticle, updateArticle, deleteArticle,
       addCategory, updateCategory, deleteCategory,
       addTag, updateTag, deleteTag,
@@ -229,6 +263,17 @@ export const BlogProvider = ({ children }) => {
       },
       fetchCategories: fetchCategoriesData,
       fetchTags: fetchTagsData,
+      fetchProjects: fetchProjectsData,
+      fetchAdminProjects: async (page = 1, size = 10, title = '') => {
+        setLoading(true);
+        const data = await fetchAdminProjects(page, size, title);
+        setProjects(data.records || []);
+        setTotalProjects(data.total || 0);
+        setLoading(false);
+      },
+      addProject,
+      updateProject: updateProjectAction,
+      deleteProject: deleteProjectAction,
       fetchProfile: fetchProfileData,
       fetchDashboardData,
       updateProfile,

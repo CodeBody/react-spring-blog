@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useBlog } from '../../context/BlogContext';
 import { formatDate } from '../../utils';
 import { Pagination } from '../../components/common/Pagination';
-import { Search } from 'lucide-react';
+import { Search, FileText } from 'lucide-react';
 
 // Animation Variants
 const staggerContainer = {
@@ -283,9 +283,24 @@ export default function Home() {
           {displayedArticles.length > 0 ? displayedArticles.map((article, index) => (
               <ArticleCard key={article.id} article={article} index={index} />
           )) : (
-            <div className="col-span-full text-center py-20 text-muted-foreground text-lg tracking-widest font-sans">
-              未找到相关内容。
-            </div>
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="col-span-full py-32 text-center flex flex-col items-center justify-center gap-8 bg-background-secondary/50 backdrop-blur-md border border-border/60 rounded-[3rem] shadow-premium mt-8"
+            >
+              <div className="w-24 h-24 rounded-[2.5rem] bg-foreground/5 flex items-center justify-center relative shadow-inner group transition-all duration-500 hover:scale-110 hover:-rotate-6">
+                <FileText size={40} className="relative z-10 text-muted-foreground/30 group-hover:text-foreground transition-colors" />
+                <div className="absolute inset-0 bg-foreground/5 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+              </div>
+              <div className="space-y-3">
+                <h3 className="text-2xl font-display font-black uppercase tracking-[0.4em] text-foreground/60">虚位以待</h3>
+                <p className="text-sm font-medium text-muted-foreground/40 max-w-sm mx-auto leading-relaxed px-6">
+                  {searchQuery 
+                    ? `未发现与 "${searchQuery}" 相关的思绪火花，请尝试其他关键词。` 
+                    : `暂无相关博文内容，创作者正在酝酿新的灵感。`}
+                </p>
+              </div>
+            </motion.div>
           )}
         </div>
 

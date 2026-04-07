@@ -107,8 +107,8 @@ export default function AdminLayout() {
                 <p className="text-[0.7rem] font-bold truncate tracking-tight">{profile?.name || '管理员'}</p>
                 <p className="text-[0.55rem] text-muted-foreground truncate uppercase tracking-[0.05em] font-black opacity-40">{profile?.role || '超级管理员'}</p>
               </div>
-              <button 
-                onClick={handleLogout} 
+              <button
+                onClick={handleLogout}
                 className="w-8 h-8 rounded-xl flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"
                 title="退出登录"
               >
@@ -144,21 +144,21 @@ export default function AdminLayout() {
               <Menu size={20} />
             </button>
             <div className="hidden lg:block">
-               <h2 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground opacity-40">工作空间 / 管理员</h2>
+              <h2 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground opacity-40">工作空间 / 管理员</h2>
             </div>
           </div>
 
           <div className="flex items-center gap-4">
             <div className="hidden md:flex items-center gap-2 px-4 h-10 rounded-2xl bg-card border border-border/50 shadow-sm focus-within:ring-2 focus-within:ring-primary/20 transition-all">
               <Search size={16} className="text-muted-foreground/50" />
-              <input 
-                type="text" 
-                placeholder="搜索全局记录..." 
+              <input
+                type="text"
+                placeholder="搜索全局记录..."
                 className="bg-transparent border-none outline-none text-xs font-semibold w-40 placeholder:text-muted-foreground/30 focus:w-56 transition-all"
               />
               <span className="px-1.5 py-0.5 rounded-md bg-muted text-[0.55rem] font-black text-muted-foreground/50 border border-border/50">⌘ K</span>
             </div>
-            
+
             <button className="relative w-10 h-10 rounded-2xl bg-card border border-border/50 flex items-center justify-center text-muted-foreground hover:text-foreground hover:shadow-md transition-all">
               <Bell size={18} />
               <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-destructive rounded-full border-2 border-card animate-pulse" />

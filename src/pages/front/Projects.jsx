@@ -1,74 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { ExternalLink, Search } from 'lucide-react';
 import { FaGithub as Github } from 'react-icons/fa';
+import { motion } from 'framer-motion';
+import { useBlog } from '../../context/BlogContext';
 import { Pagination } from '../../components/common/Pagination';
 
-const mockProjects = [
-  {
-    id: 1,
-    title: 'AI Markdown Editor',
-    description: 'A beautifully designed, local-first markdown editor with built-in AI completion and dark mode support.',
-    tags: ['React', 'Vite', 'Tailwind CSS', 'OpenAI'],
-    github: '#',
-    demo: '#',
-    color: 'from-blue-500/20 to-purple-500/20'
-  },
-  {
-    id: 2,
-    title: 'Glassmorphism UI Kit',
-    description: 'A comprehensive collection of accessible, modern UI components tailored for atmospheric web applications.',
-    tags: ['Next.js', 'Framer Motion', 'Radix UI'],
-    github: '#',
-    demo: '#',
-    color: 'from-emerald-500/20 to-teal-500/20'
-  },
-  {
-    id: 3,
-    title: 'Blog CMS Platform',
-    description: 'A minimalist headless CMS blog powered by React and Markdown, entirely client-side rendered for edge deployments.',
-    tags: ['React Router', 'MDX', 'Tailwind CSS'],
-    github: '#',
-    demo: '#',
-    color: 'from-orange-500/20 to-red-500/20'
-  },
-  {
-    id: 4,
-    title: 'Atmospheric Dashboard',
-    description: 'An expansive and premium web dashboard with glassmorphic cards, data visualizations, and glowing effects.',
-    tags: ['React', 'CSS3', 'Recharts'],
-    github: '#',
-    demo: '#',
-    color: 'from-gray-500/20 to-slate-500/20'
-  },
-  ...Array.from({ length: 32 }).map((_, i) => ({
-    id: i + 5,
-    title: `Experimental Concept ${i + 1}`,
-    description: `A highly conceptual side project exploring new rendering patterns in web technologies. Iteration #${i + 1} focused on performance limits.`,
-    tags: ['WebGL', 'Rust', 'Wasm', 'Vite'],
-    github: '#',
-    demo: '#',
-    color: 'from-muted/20 to-border/30'
-  }))
-];
-
 export default function Projects() {
+  const { projects, fetchProjects, loading } = useBlog();
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const ITEMS_PER_PAGE = 6;
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
 
   useEffect(() => {
     setCurrentPage(1);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [searchQuery]);
 
-  const filteredProjects = mockProjects.filter(p => 
+  const filteredProjects = projects.filter(p => 
     p.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
     p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    p.tags.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()))
+    (p.tags && p.tags.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
   const totalPages = Math.ceil(filteredProjects.length / ITEMS_PER_PAGE);
   const displayedProjects = filteredProjects.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+
 
   return (
     <div className="pt-32 pb-24 max-w-6xl mx-auto px-6 lg:px-8 w-full animate-in fade-in slide-in-from-bottom-6 duration-700 ease-in-out">
@@ -112,18 +72,18 @@ export default function Projects() {
               </p>
               
               <div className="flex flex-wrap gap-2 mb-8">
-                {project.tags.map(tag => (
+                {project.tags && project.tags.split(',').map(tag => (
                   <span key={tag} className="px-3 py-1 bg-muted/50 border border-border/50 text-xs font-semibold rounded-full lowercase tracking-wider text-muted-foreground">
-                    {tag}
+                    {tag.trim()}
                   </span>
                 ))}
               </div>
 
               <div className="flex items-center gap-6 mt-auto">
-                <a href={project.github} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors group/link">
+                <a href={project.githubUrl || '#'} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors group/link">
                   <Github size={18} className="group-hover/link:-translate-y-0.5 transition-transform" /> 代码仓库
                 </a>
-                <a href={project.demo} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-brand-primary transition-colors group/link">
+                <a href={project.demoUrl || '#'} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-brand-primary transition-colors group/link">
                   <ExternalLink size={18} className="group-hover/link:-translate-y-0.5 transition-transform" /> 在线演示
                 </a>
               </div>
@@ -132,9 +92,24 @@ export default function Projects() {
         ))}
         </div>
       ) : (
-        <div className="text-center py-20 bg-muted/20 border border-border/50 rounded-3xl">
-          <p className="text-lg text-muted-foreground">未找到匹配 "{searchQuery}" 的项目</p>
-        </div>
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="py-32 text-center flex flex-col items-center justify-center gap-8 bg-card/30 backdrop-blur-md border border-border/40 rounded-[3rem] shadow-premium"
+        >
+          <div className="w-24 h-24 rounded-[2.5rem] bg-primary/10 flex items-center justify-center relative shadow-inner group transition-all duration-500 hover:scale-110 hover:rotate-6">
+            <Search size={40} className="relative z-10 text-primary/40 group-hover:text-primary transition-colors" />
+            <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+          </div>
+          <div className="space-y-3">
+            <h3 className="text-2xl font-display font-black uppercase tracking-[0.4em] text-foreground/60">未发现项目</h3>
+            <p className="text-sm font-medium text-muted-foreground/40 max-w-xs mx-auto leading-relaxed">
+              {searchQuery 
+                ? `尝试更换搜索关键词，寻找其他灵感空间` 
+                : `该领域尚待探索，新项目即将在此启航`}
+            </p>
+          </div>
+        </motion.div>
       )}
 
       {filteredProjects.length > 0 && (

@@ -21,6 +21,8 @@ const Categories = lazy(() => import('../pages/admin/Categories'));
 const Tags = lazy(() => import('../pages/admin/Tags'));
 const Users = lazy(() => import('../pages/admin/Users'));
 const EditArticle = lazy(() => import('../pages/admin/EditArticle'));
+const AdminProjects = lazy(() => import('../pages/admin/Projects'));
+const EditProject = lazy(() => import('../pages/admin/EditProject'));
 const Settings = lazy(() => import('../pages/admin/Settings'));
 
 const LoadingFallback = () => (
@@ -76,6 +78,9 @@ export const router = createBrowserRouter([
       { path: 'categories', element: <LazyLoad><Categories /></LazyLoad> },
       { path: 'tags', element: <LazyLoad><Tags /></LazyLoad> },
       { path: 'users', element: <LazyLoad><Users /></LazyLoad> },
+      { path: 'projects', element: <LazyLoad><AdminProjects /></LazyLoad> },
+      { path: 'project/new', element: <LazyLoad><EditProject /></LazyLoad> },
+      { path: 'project/edit/:id', element: <LazyLoad><EditProject /></LazyLoad> },
       { path: 'article/new', element: <LazyLoad><EditArticle /></LazyLoad> },
       { path: 'article/edit/:id', element: <LazyLoad><EditArticle /></LazyLoad> },
       { path: 'settings', element: <LazyLoad><Settings /></LazyLoad> },

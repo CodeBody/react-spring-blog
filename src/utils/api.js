@@ -100,6 +100,72 @@ export const fetchCategories = async () => {
   return [];
 };
 
+export const fetchProjects = async () => {
+  try {
+    const res = await fetch('/api/projects');
+    const data = await res.json();
+    if (data.code === 200) {
+      return data.data;
+    }
+  } catch (error) {
+    console.error('Fetch projects error:', error);
+  }
+  return [];
+};
+
+export const fetchAdminProjects = async (page = 1, size = 10, title = '') => {
+  try {
+    let url = `/api/admin/projects?page=${page}&size=${size}`;
+    if (title) url += `&title=${encodeURIComponent(title)}`;
+    const res = await fetchWithAuth(url);
+    const data = await res.json();
+    if (data.code === 200) {
+      return data.data;
+    }
+  } catch (error) {
+    console.error('Fetch admin projects error:', error);
+  }
+  return { records: [], total: 0 };
+};
+
+export const fetchAdminProjectById = async (id) => {
+  try {
+    const res = await fetchWithAuth(`/api/admin/projects/${id}`);
+    const data = await res.json();
+    if (data.code === 200) {
+      return data.data;
+    }
+  } catch (error) {
+    console.error('Fetch admin project by id error:', error);
+  }
+  return null;
+};
+
+export const createProject = async (project) => {
+  const res = await fetchWithAuth('/api/admin/projects', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(project)
+  });
+  return res.json();
+};
+
+export const updateProject = async (project) => {
+  const res = await fetchWithAuth(`/api/admin/projects/${project.id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(project)
+  });
+  return res.json();
+};
+
+export const deleteProject = async (id) => {
+  const res = await fetchWithAuth(`/api/admin/projects/${id}`, {
+    method: 'DELETE'
+  });
+  return res.json();
+};
+
 export const createCategory = async (category) => {
   const res = await fetchWithAuth('/api/admin/categories', {
     method: 'POST',
