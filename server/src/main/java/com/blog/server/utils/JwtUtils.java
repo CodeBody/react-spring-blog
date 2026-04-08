@@ -12,8 +12,10 @@ import java.util.Date;
 @Component
 public class JwtUtils {
 
-    // In a real application, this should be in an environment variable or config file
-    private static final String SECRET = "your-very-secure-and-long-secret-key-for-blog-jwt-authentication";
+    // Use an environment variable for actual secret in production
+    private static final String SECRET = System.getenv("JWT_SECRET") != null 
+        ? System.getenv("JWT_SECRET") 
+        : "default-dev-secret-key-for-blog-jwt-authentication-needs-to-be-long-enough";
     private static final long EXPIRATION = 7 * 24 * 60 * 60 * 1000; // 7 days
 
     private final SecretKey key = Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
