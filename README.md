@@ -1,5 +1,7 @@
 # 🌟 个人博客系统
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-在线体验官网-blueviolet?style=for-the-badge&logo=rocket)](http://www.alexsummer.icu/)
+
 一个基于前沿技术栈构建的现代化全栈个人博客和作品集系统。具备优雅的响应式界面和稳健安全的后端架构。
 
 <div align="center">
