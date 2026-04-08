@@ -79,3 +79,19 @@ create table users
 )
     comment '用户表';
 
+create table projects
+(
+    id          bigint                               not null comment '项目ID'
+        primary key,
+    title       varchar(255)                         not null comment '项目标题',
+    description text                                 not null comment '项目描述',
+    tags        varchar(255)                         null comment '技术标签，逗号分隔 (如: React,Vite,Tailwind)',
+    github_url  varchar(255)                         null comment 'GitHub 仓库链接',
+    demo_url    varchar(255)                         null comment '在线演示链接',
+    color       varchar(100)                         null comment '前端显示的颜色渐变类 (如: from-blue-500/20 to-purple-500/20)',
+    created_at  datetime   default CURRENT_TIMESTAMP not null comment '创建时间',
+    updated_at  datetime   default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    deleted     tinyint(1) default 0                 null comment '删除标识 0: 未删除 1: 已删除'
+)
+    comment '项目作品表';
+
