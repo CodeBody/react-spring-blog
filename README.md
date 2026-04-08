@@ -1,16 +1,93 @@
-# React + Vite
+# 🌟 Personal Blog System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, full-stack personal blog and portfolio system built with cutting-edge technologies. Designed with a sleek, responsive user interface and a robust, secure backend.
 
-Currently, two official plugins are available:
+## 🚀 Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+### Frontend
+- **Framework**: React 19 + Vite 8
+- **Styling**: Tailwind CSS, PostCSS
+- **Animations**: Framer Motion, React Three Fiber (3D effects)
+- **Routing**: React Router DOM v6
+- **Markdown**: React Markdown, UIW React MD Editor
 
-## React Compiler
+### Backend
+- **Framework**: Spring Boot 3.2.4
+- **Language**: Java 17
+- **Database**: MySQL 8.0+
+- **ORM**: MyBatis-Plus 3.5.5
+- **Security**: Spring Security + JWT Authentication
+- **API Docs**: SpringDoc OpenAPI (Swagger 3)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 🛠️ Getting Started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Follow these steps to set up the project locally.
+
+### 1. Database Setup
+1. Install MySQL 8.0+ and start the MySQL service.
+2. Create a new database named `blog`:
+   ```sql
+   CREATE DATABASE blog DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+   ```
+3. Import the provided SQL structure:
+   ```bash
+   mysql -u root -p blog < database.sql
+   ```
+*(Note: There is also a `database.db` SQLite file locally, but the Spring application connects to MySQL by default).*
+
+### 2. Backend Configuration
+For security, the backend relies on environment variables for database credentials rather than hardcoding them. You must set these variables before running the application.
+
+- **`DB_HOST`**: Database host (default: `localhost`)
+- **`DB_USERNAME`**: MySQL username (e.g., `root`)
+- **`DB_PASSWORD`**: MySQL password
+- **`JWT_SECRET`**: (Optional) Custom secret key for signing JWT tokens.
+
+**Running locally (Dev profile):**
+```bash
+cd server
+# Ensure you are using Java 17
+mvn clean compile
+
+# Pass the environment variables when starting Spring Boot:
+DB_USERNAME=root DB_PASSWORD=your_password mvn spring-boot:run
+```
+*(The server will start on `http://localhost:8080`)*
+
+### 3. Frontend Configuration
+The frontend project is located in the root directory.
+
+```bash
+# Important: Requires Node.js (v18+)
+# 1. Install dependencies
+npm install
+
+# 2. Start the Vite development server
+npm run dev
+```
+The local frontend dev server will typically start on `http://localhost:5173`. API requests are automatically proxied to the backend on port `8080`.
+
+---
+
+## 🏗️ Project Structure
+
+```text
+├── src/                  # Frontend source code (React)
+│   ├── components/       # Reusable UI components
+│   ├── pages/            # Page Views (Front & Admin)
+│   ├── router/           # React Router configurations
+│   ├── utils/            # Utility functions and API helpers
+│   └── index.css         # Global Tailwind styles
+├── server/               # Backend source code (Spring Boot)
+│   ├── src/main/java     # Java source code
+│   └── src/main/resources# Application configurations (application.yml)
+├── database.sql          # Database initialization script
+├── README.md             # This readme file
+└── package.json          # Frontend dependencies
+```
+
+## 📄 License
+
+This project is open-sourced under the [MIT License](LICENSE).
