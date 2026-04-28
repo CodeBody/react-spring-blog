@@ -17,12 +17,29 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Collections;
 
+/**
+ * JWT 鉴权过滤器。
+ * 设计意图：从请求头解析令牌并将认证信息写入 Spring Security 上下文。
+ */
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    /**
+     * JWT 工具类。
+     * 业务含义：负责令牌解析与字段读取。
+     */
     private final JwtUtils jwtUtils;
 
+    /**
+     * 执行单次请求的 JWT 认证处理。
+     * @param request HTTP 请求对象，不能为空。
+     * @param response HTTP 响应对象，不能为空。
+     * @param filterChain 过滤器链对象，不能为空。
+     * @return 无返回值。
+     * @throws ServletException 当过滤器处理失败时抛出异常。
+     * @throws IOException 当 IO 处理失败时抛出异常。
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, 
                                     @NonNull HttpServletResponse response, 

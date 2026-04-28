@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Suspense, lazy } from 'react';
@@ -6,38 +7,122 @@ import { Suspense, lazy } from 'react';
 import FrontendLayout from '../components/front/FrontendLayout';
 import AdminLayout from '../components/admin/AdminLayout';
 
-// Pages (Lazy)
+/**
+ * 前台首页页面组件，按需加载以降低首屏体积。
+ * 取值范围：React Lazy 组件。
+ */
 const Home = lazy(() => import('../pages/front/Home'));
+/**
+ * 文章详情页面组件，按需加载以降低首屏体积。
+ * 取值范围：React Lazy 组件。
+ */
 const ArticleDetail = lazy(() => import('../pages/front/ArticleDetail'));
+/**
+ * 关于页组件，按需加载以降低首屏体积。
+ * 取值范围：React Lazy 组件。
+ */
 const About = lazy(() => import('../pages/front/About'));
+/**
+ * 项目页组件，按需加载以降低首屏体积。
+ * 取值范围：React Lazy 组件。
+ */
 const Projects = lazy(() => import('../pages/front/Projects'));
+/**
+ * 联系页组件，按需加载以降低首屏体积。
+ * 取值范围：React Lazy 组件。
+ */
 const Contact = lazy(() => import('../pages/front/Contact'));
+/**
+ * 知识星球页面组件，按需加载以降低首屏体积。
+ * 取值范围：React Lazy 组件。
+ */
 const KnowledgePlanetPage = lazy(() => import('../pages/front/KnowledgePlanetPage'));
 
+/**
+ * 后台登录页组件，按需加载以降低首屏体积。
+ * 取值范围：React Lazy 组件。
+ */
 const Login = lazy(() => import('../pages/admin/Login'));
+/**
+ * 后台仪表盘页面组件，按需加载以降低首屏体积。
+ * 取值范围：React Lazy 组件。
+ */
 const Dashboard = lazy(() => import('../pages/admin/Dashboard'));
+/**
+ * 后台文章列表页面组件，按需加载以降低首屏体积。
+ * 取值范围：React Lazy 组件。
+ */
 const Posts = lazy(() => import('../pages/admin/Posts'));
+/**
+ * 后台分类页组件，按需加载以降低首屏体积。
+ * 取值范围：React Lazy 组件。
+ */
 const Categories = lazy(() => import('../pages/admin/Categories'));
+/**
+ * 后台标签页组件，按需加载以降低首屏体积。
+ * 取值范围：React Lazy 组件。
+ */
 const Tags = lazy(() => import('../pages/admin/Tags'));
+/**
+ * 后台用户页组件，按需加载以降低首屏体积。
+ * 取值范围：React Lazy 组件。
+ */
 const Users = lazy(() => import('../pages/admin/Users'));
+/**
+ * 后台文章编辑页组件，按需加载以降低首屏体积。
+ * 取值范围：React Lazy 组件。
+ */
 const EditArticle = lazy(() => import('../pages/admin/EditArticle'));
+/**
+ * 后台项目列表页组件，按需加载以降低首屏体积。
+ * 取值范围：React Lazy 组件。
+ */
 const AdminProjects = lazy(() => import('../pages/admin/Projects'));
+/**
+ * 后台项目编辑页组件，按需加载以降低首屏体积。
+ * 取值范围：React Lazy 组件。
+ */
 const EditProject = lazy(() => import('../pages/admin/EditProject'));
+/**
+ * 后台设置页组件，按需加载以降低首屏体积。
+ * 取值范围：React Lazy 组件。
+ */
 const Settings = lazy(() => import('../pages/admin/Settings'));
 
+/**
+ * 懒加载页面的统一占位视图。
+ * @returns {JSX.Element} 返回全局加载动画。
+ * @description 仅在路由模块按需加载期间展示。
+ */
 const LoadingFallback = () => (
   <div className="flex items-center justify-center min-h-[60vh]">
     <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
   </div>
 );
 
+/**
+ * 为任意子页面包裹 Suspense。
+ * @param {{children: React.ReactNode}} props 组件入参。
+ * @param {React.ReactNode} props.children 被懒加载包装的子节点。
+ * @returns {JSX.Element} 返回带统一 fallback 的 Suspense 包装器。
+ */
 const LazyLoad = ({ children }) => (
   <Suspense fallback={<LoadingFallback />}>
     {children}
   </Suspense>
 );
 
+/**
+ * 后台受保护路由组件。
+ * @param {{children: React.ReactNode}} props 组件入参。
+ * @param {React.ReactNode} props.children 需要鉴权保护的子节点。
+ * @returns {JSX.Element} 已登录时渲染原内容，否则跳转登录页。
+ */
 const ProtectedRoute = ({ children }) => {
+  /**
+   * 当前后台登录状态。
+   * 取值范围：`true` / `false`。
+   */
   const { isAuthenticated } = useAuth();
   if (!isAuthenticated) {
     return <Navigate to="/admin/login" replace />;
@@ -45,6 +130,10 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
+/**
+ * 应用全局路由实例。
+ * 取值范围：React Router Browser Router 对象。
+ */
 export const router = createBrowserRouter([
   {
     path: '/',

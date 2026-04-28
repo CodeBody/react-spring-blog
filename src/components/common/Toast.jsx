@@ -1,8 +1,18 @@
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, m } from 'framer-motion';
 import { CheckCircle, XCircle, Info, AlertTriangle, X } from 'lucide-react';
 import { useBlog } from '../../context/BlogContext';
 
+/**
+ * 统一复用的动效容器组件。
+ * 取值范围：`framer-motion` 提供的 div 动效组件。
+ */
+const MotionDiv = m.div;
+
+/**
+ * 不同提示类型对应的图标与样式配置。
+ * 取值范围：按 `success/error/warning/info` 分类的展示配置对象。
+ */
 const toastTypes = {
   success: {
     icon: <CheckCircle size={20} className="text-emerald-500" />,
@@ -30,16 +40,29 @@ const toastTypes = {
   }
 };
 
+/**
+ * 全局提示组件，负责消费博客上下文中的通知队列。
+ * @returns {JSX.Element} 返回右下角悬浮提示容器。
+ * @description 当前组件只负责展示，不负责关闭逻辑调度。
+ */
 export default function Toast() {
+  /**
+   * 当前待展示的提示消息列表。
+   * 取值范围：Toast 对象数组。
+   */
   const { toasts } = useBlog();
 
   return (
     <div className="fixed bottom-8 right-8 z-[10000] flex flex-col gap-4 pointer-events-none">
       <AnimatePresence mode="popLayout">
         {toasts.map((toast) => {
+          /**
+           * 当前提示类型对应的渲染配置。
+           * 取值范围：提示类型配置对象；未知类型时回退到 `info`。
+           */
           const config = toastTypes[toast.type] || toastTypes.info;
           return (
-            <motion.div
+            <MotionDiv
               key={toast.id}
               layout
               initial={{ opacity: 0, x: 50, scale: 0.9 }}
@@ -48,7 +71,7 @@ export default function Toast() {
               className={`pointer-events-auto min-w-[320px] max-w-md p-5 rounded-2xl border ${config.border} ${config.bg} backdrop-blur-xl shadow-2xl flex items-center gap-4 relative overflow-hidden group`}
             >
               {/* Progress bar accent */}
-              <motion.div 
+              <MotionDiv
                 initial={{ width: '100%' }}
                 animate={{ width: '0%' }}
                 transition={{ duration: 3, ease: 'linear' }}
@@ -74,7 +97,7 @@ export default function Toast() {
               <div className="opacity-0 group-hover:opacity-100 transition-opacity">
                  <X size={14} className="text-muted-foreground hover:text-foreground cursor-pointer" />
               </div>
-            </motion.div>
+            </MotionDiv>
           );
         })}
       </AnimatePresence>
