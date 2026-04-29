@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useBlog } from '../../context/BlogContext';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, m } from 'framer-motion';
 import { 
   Plus, 
   Edit3, 
@@ -16,6 +16,12 @@ import {
 import ConfirmModal from '../../components/common/ConfirmModal';
 import { FaGithub } from 'react-icons/fa6';
 
+/**
+ * 动效容器组件。
+ * 取值范围：`framer-motion` 提供的 div 动效组件。
+ */
+const MotionDiv = m.div;
+
 export default function Users() {
   const { users, addUser, updateUser, deleteUser, fetchUsers, showToast } = useBlog();
   const [isAdding, setIsAdding] = useState(false);
@@ -26,6 +32,8 @@ export default function Users() {
 
   useEffect(() => {
     fetchUsers();
+    // 这里保持首次进入时加载一次用户列表，避免上下文函数引用变化导致重复请求。
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const filtered = (users || []).filter(u => 
@@ -229,7 +237,7 @@ export default function Users() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-12">
           <AnimatePresence mode="popLayout">
             {filtered.length > 0 ? filtered.map((user, idx) => (
-              <motion.div 
+              <MotionDiv 
                 key={user.id} 
                 layout
                 initial={{ opacity: 0, y: 20 }}
@@ -282,9 +290,9 @@ export default function Users() {
                   </div>
                   <div className="text-[0.55rem] font-black text-muted-foreground/10 uppercase tracking-[0.3em] italic">ROOT_ID_{user.id}</div>
                 </div>
-              </motion.div>
+              </MotionDiv>
             )) : (
-              <motion.div 
+              <MotionDiv 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 className="col-span-full py-32 text-center opacity-40 flex flex-col items-center justify-center gap-8"
@@ -296,7 +304,7 @@ export default function Users() {
                    <p className="text-lg font-black uppercase tracking-[0.5em] text-muted-foreground/60">未发现成员</p>
                    <p className="text-xs font-bold opacity-40 tracking-wider">尝试更换搜索关键词或开通新成员账号</p>
                  </div>
-              </motion.div>
+              </MotionDiv>
             )}
           </AnimatePresence>
         </div>

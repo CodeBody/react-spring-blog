@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { ExternalLink, Search } from 'lucide-react';
 import { FaGithub as Github } from 'react-icons/fa';
 import { AnimatePresence, m } from 'framer-motion';
@@ -70,7 +71,9 @@ export default function Projects() {
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [currentPage, fetchProjects, searchQuery]);
+    // 这里保持原有请求节奏，避免上下文函数引用变化导致重复触发。
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage, searchQuery]);
 
   /**
    * 将页面滚动到顶部。
@@ -150,12 +153,16 @@ export default function Projects() {
                 </div>
 
                 <div className="flex items-center gap-6 mt-auto">
-                  <a href={project.githubUrl || '#'} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors group/link">
-                    <Github size={18} className="group-hover/link:-translate-y-0.5 transition-transform" /> 代码仓库
-                  </a>
-                  <a href={project.demoUrl || '#'} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-brand-primary transition-colors group/link">
-                    <ExternalLink size={18} className="group-hover/link:-translate-y-0.5 transition-transform" /> 在线演示
-                  </a>
+                  {project.githubUrl && (
+                    <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors group/link">
+                      <Github size={18} className="group-hover/link:-translate-y-0.5 transition-transform" /> 代码仓库
+                    </a>
+                  )}
+                  {project.demoUrl && (
+                    <a href={project.demoUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-brand-primary transition-colors group/link">
+                      <ExternalLink size={18} className="group-hover/link:-translate-y-0.5 transition-transform" /> 在线演示
+                    </a>
+                  )}
                 </div>
               </div>
             </div>
@@ -177,6 +184,14 @@ export default function Projects() {
               <p className="text-sm font-medium text-muted-foreground/40 max-w-xs mx-auto leading-relaxed">
                 {getEmptyDescription(searchQuery)}
               </p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Link to="/" className="px-6 py-3 rounded-2xl bg-foreground text-background text-sm font-semibold tracking-wider transition-transform hover:-translate-y-1">
+                返回首页
+              </Link>
+              <Link to="/articles" className="px-6 py-3 rounded-2xl border border-border text-sm font-semibold tracking-wider text-muted-foreground hover:text-foreground hover:border-foreground transition-colors">
+                去看文章
+              </Link>
             </div>
           </MotionDiv>
         </AnimatePresence>

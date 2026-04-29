@@ -10,7 +10,6 @@ import Toast from '../common/Toast';
  * 业务含义：统一维护前台头部导航的名称与路径映射。
  */
 const NAV_LINKS = [
-  { name: '灵感星系', path: '/planet' },
   { name: '博文', path: '/' },
   { name: '项目', path: '/projects' },
   { name: '关于', path: '/about' },
@@ -62,14 +61,13 @@ const getCopyrightName = (profile) => (profile?.name ? profile.name.split(' ')[0
  * @param {string} targetPath 目标路由路径。
  * @returns {boolean} 命中当前路径时返回 `true`。
  */
-const isActivePath = (currentPath, targetPath) => currentPath === targetPath;
+const isActivePath = (currentPath, targetPath) => {
+  if (targetPath !== '/') {
+    return currentPath === targetPath;
+  }
 
-/**
- * 判断当前页面是否需要隐藏页脚。
- * @param {string} currentPath 当前路由路径。
- * @returns {boolean} 星空页返回 `true`，其余页面返回 `false`。
- */
-const shouldHideFooter = (currentPath) => currentPath === '/planet';
+  return ['/', '/articles'].includes(currentPath) || currentPath.startsWith('/article/') || currentPath.startsWith('/category/');
+};
 
 /**
  * 前台头部组件。
@@ -217,9 +215,9 @@ const Footer = () => {
       <div className="max-w-6xl mx-auto px-6 lg:px-8">
         <div className="flex flex-col md:flex-row justify-between items-center md:items-start mb-16 gap-8">
           <div className="text-center md:text-left">
-            <a href="#" className="font-display text-[1.5rem] font-[800] tracking-[-0.03em] bg-foreground text-transparent bg-clip-text hover:gradient-text transition-all duration-300">
+            <Link to="/" className="font-display text-[1.5rem] font-[800] tracking-[-0.03em] bg-foreground text-transparent bg-clip-text hover:gradient-text transition-all duration-300">
               {getFooterBrandName(profile)}
-            </a>
+            </Link>
             <p className="text-muted-foreground text-[0.95rem] mt-2">
               用心设计并建造。
             </p>
@@ -271,7 +269,7 @@ export default function FrontendLayout() {
       <main className="flex-1 w-full relative">
         <Outlet />
       </main>
-      {!shouldHideFooter(location.pathname) && <Footer />}
+      <Footer />
       <Toast />
     </div>
   );

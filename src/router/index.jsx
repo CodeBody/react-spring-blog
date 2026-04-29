@@ -33,12 +33,6 @@ const Projects = lazy(() => import('../pages/front/Projects'));
  */
 const Contact = lazy(() => import('../pages/front/Contact'));
 /**
- * 知识星球页面组件，按需加载以降低首屏体积。
- * 取值范围：React Lazy 组件。
- */
-const KnowledgePlanetPage = lazy(() => import('../pages/front/KnowledgePlanetPage'));
-
-/**
  * 后台登录页组件，按需加载以降低首屏体积。
  * 取值范围：React Lazy 组件。
  */
@@ -143,7 +137,6 @@ export const router = createBrowserRouter([
       { path: 'articles', element: <LazyLoad><Home /></LazyLoad> },
       { path: 'category/:categoryId', element: <LazyLoad><Home /></LazyLoad> },
       { path: 'article/:id', element: <LazyLoad><ArticleDetail /></LazyLoad> },
-      { path: 'planet', element: <LazyLoad><KnowledgePlanetPage /></LazyLoad> },
       { path: 'about', element: <LazyLoad><About /></LazyLoad> },
       { path: 'projects', element: <LazyLoad><Projects /></LazyLoad> },
       { path: 'contact', element: <LazyLoad><Contact /></LazyLoad> },

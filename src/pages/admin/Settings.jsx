@@ -1,109 +1,107 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useBlog } from '../../context/BlogContext';
-import { motion } from 'framer-motion';
-import { 
-  Save, 
-  Check, 
-  Camera, 
-  AtSign, 
-  User, 
-  Globe, 
-  Link as LinkIcon 
-} from 'lucide-react';
+import { m } from 'framer-motion';
+import { AtSign, Camera, Check, Globe, Link as LinkIcon, Save, User } from 'lucide-react';
 import { FaGithub } from 'react-icons/fa6';
 
-export default function Settings() {
-  const { profile, updateProfile, fetchProfile } = useBlog();
-  const [formData, setFormData] = useState({
-    name: '',
-    bio: '',
-    avatar: '',
-    github: '',
-    twitter: '',
-    linkedin: ''
-  });
+/**
+ * 动效容器组件。
+ * 取值范围：`framer-motion` 提供的 div 动效组件。
+ */
+const MotionDiv = m.div;
+
+/**
+ * 根据资料对象构建设置表单。
+ * @param {Record<string, any>} profile 管理员资料对象。
+ * @returns {Record<string, any>} 返回设置页表单字段对象。
+ */
+const buildSettingsFormData = (profile) => ({
+  name: profile?.name || '',
+  bio: profile?.bio || '',
+  avatar: profile?.avatar || '',
+  github: profile?.socials?.github || '',
+  twitter: profile?.socials?.twitter || '',
+  linkedin: profile?.socials?.linkedin || '',
+});
+
+/**
+ * 社交链接字段配置。
+ * 业务含义：统一驱动社交矩阵输入区渲染。
+ */
+const SOCIAL_FIELDS = [
+  { name: 'github', label: 'GitHub 仓库', placeholder: 'GITHUB.COM/USERNAME', icon: <FaGithub size={18} /> },
+  { name: 'twitter', label: 'Twitter 节点', placeholder: 'TWITTER.COM/USERNAME', icon: <AtSign size={18} /> },
+  { name: 'linkedin', label: 'LinkedIn 链接', placeholder: 'LINKEDIN.COM/IN/USERNAME', icon: <LinkIcon size={18} /> },
+];
+
+/**
+ * 设置页表单视图。
+ * @param {object} props 组件入参。
+ * @param {Record<string, any>} props.profile 当前管理员资料对象。
+ * @param {(payload: Record<string, any>) => void} props.onSubmit 表单提交回调。
+ * @returns {JSX.Element} 返回设置表单界面。
+ */
+const SettingsForm = ({ profile, onSubmit }) => {
+  /**
+   * 当前表单数据。
+   * 取值范围：设置页表单字段对象。
+   */
+  const [formData, setFormData] = useState(() => buildSettingsFormData(profile));
+  /**
+   * 当前是否展示已保存状态。
+   * 取值范围：`true` / `false`。
+   */
   const [isSaved, setIsSaved] = useState(false);
 
-  useEffect(() => {
-    fetchProfile();
-  }, []);
-
-  useEffect(() => {
-    if (profile) {
-      setFormData({
-        name: profile.name || '',
-        bio: profile.bio || '',
-        avatar: profile.avatar || '',
-        github: profile.socials?.github || '',
-        twitter: profile.socials?.twitter || '',
-        linkedin: profile.socials?.linkedin || ''
-      });
-    }
-  }, [profile]);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+  /**
+   * 处理表单字段变更。
+   * @param {React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>} event 输入事件对象。
+   * @returns {void} 无返回值。
+   */
+  const handleChange = (event) => {
+    /**
+     * 当前被修改的字段名和值。
+     * 取值范围：设置表单合法字段。
+     */
+    const { name, value } = event.target;
+    setFormData((previousFormData) => ({ ...previousFormData, [name]: value }));
     setIsSaved(false);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    updateProfile({
-      name: formData.name,
-      bio: formData.bio,
-      avatar: formData.avatar,
-      socials: {
-        github: formData.github,
-        twitter: formData.twitter,
-        linkedin: formData.linkedin
-      }
-    });
+  /**
+   * 处理设置保存。
+   * @param {React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>} event 表单或按钮事件对象。
+   * @returns {void} 无返回值。
+   */
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    onSubmit(formData);
     setIsSaved(true);
-    setTimeout(() => setIsSaved(false), 3000);
+    window.setTimeout(() => setIsSaved(false), 3000);
   };
 
   return (
     <div className="space-y-10 pb-32">
-      {/* Page Header */}
-      <motion.div 
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.8 }}
-        className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6"
-      >
+      <MotionDiv initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6">
         <div>
           <h1 className="text-4xl font-display font-black tracking-tight mb-2 text-gradient">系统偏好</h1>
           <p className="text-muted-foreground text-xs font-bold uppercase tracking-[0.2em] opacity-40">个人身份与数字展示</p>
         </div>
-        <button 
-          onClick={handleSubmit} 
-          className={`px-8 py-3 rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl transition-all flex items-center gap-2 ${isSaved ? 'bg-emerald-500 text-white shadow-emerald-500/20' : 'bg-primary text-primary-foreground shadow-primary/20 hover:scale-105 active:scale-95'}`}
-        >
+        <button onClick={handleSubmit} className={`px-8 py-3 rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl transition-all flex items-center gap-2 ${isSaved ? 'bg-emerald-500 text-white shadow-emerald-500/20' : 'bg-primary text-primary-foreground shadow-primary/20 hover:scale-105 active:scale-95'}`}>
           {isSaved ? <Check size={18} strokeWidth={3} /> : <Save size={18} strokeWidth={2.5} />}
           {isSaved ? '设置已保存' : '保存更改'}
         </button>
-      </motion.div>
+      </MotionDiv>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 pt-4">
-        {/* Left Side: Identity Card */}
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="lg:col-span-4"
-        >
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-12 pt-4">
+        <MotionDiv initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }} className="lg:col-span-4">
           <div className="glass-card p-10 rounded-[3rem] flex flex-col items-center text-center space-y-8 sticky top-32 shadow-2xl relative overflow-hidden backdrop-blur-3xl">
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-            
+
             <div className="relative group">
               <div className="absolute inset-0 bg-primary/20 rounded-[2.5rem] blur-2xl group-hover:bg-primary/30 transition-all duration-700" />
               <div className="w-44 h-44 rounded-[3rem] border-4 border-background overflow-hidden bg-muted/20 relative z-10 p-1.5 shadow-2xl">
-                <img 
-                  src={formData.avatar || "/assets/images/avatar-default.svg"} 
-                  alt="Avatar Preview" 
-                  className="w-full h-full object-cover rounded-[2.5rem] transition-all duration-1000 grayscale group-hover:grayscale-0 group-hover:scale-110"
-                />
+                <img src={formData.avatar || '/assets/images/avatar-default.svg'} alt="Avatar Preview" className="w-full h-full object-cover rounded-[2.5rem] transition-all duration-1000 grayscale group-hover:grayscale-0 group-hover:scale-110" />
                 <div className="absolute inset-0 bg-primary/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm rounded-[2.5rem]">
                   <Camera size={28} className="text-white" />
                 </div>
@@ -112,28 +110,21 @@ export default function Settings() {
                 <AtSign size={18} strokeWidth={3} />
               </div>
             </div>
-            
+
             <div className="space-y-2 relative z-10 w-full">
               <h3 className="font-display text-3xl font-black tracking-tighter truncate group-hover:text-primary transition-colors">{formData.name || '匿名用户'}</h3>
               <p className="text-[0.65rem] font-black text-muted-foreground uppercase tracking-[0.3em] opacity-30 mt-1 italic">活跃视觉形象</p>
             </div>
-            
+
             <div className="w-16 h-1 rounded-full bg-primary/10 mx-auto" />
-            
+
             <p className="text-xs font-semibold text-muted-foreground/60 leading-loose italic px-6 tracking-tight relative z-10">
               "{formData.bio || '在这里开启你的故事。写一段能体现你愿景与哲学的简介。'}"
             </p>
           </div>
-        </motion.div>
+        </MotionDiv>
 
-        {/* Right Side: Configuration Blocks */}
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="lg:col-span-8 space-y-12"
-        >
-          {/* Identity Block */}
+        <MotionDiv initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.4 }} className="lg:col-span-8 space-y-12">
           <section className="glass-card p-10 rounded-[3rem] space-y-10 border-border/20 shadow-xl">
             <div className="flex items-center gap-4 border-b border-border/30 pb-6">
               <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
@@ -146,40 +137,21 @@ export default function Settings() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
               <div className="space-y-3">
                 <label className="text-[0.65rem] font-black text-muted-foreground/40 tracking-[0.2em] uppercase">显示名称</label>
-                <input 
-                  name="name" 
-                  value={formData.name} 
-                  onChange={handleChange} 
-                  placeholder="例如：夏了个天"
-                  className="w-full bg-muted/20 border-b-2 border-border/50 focus:border-primary py-3 text-xl font-black tracking-tight focus:outline-none transition-all placeholder:opacity-5"
-                />
+                <input name="name" value={formData.name} onChange={handleChange} placeholder="例如：夏了个天" className="w-full bg-muted/20 border-b-2 border-border/50 focus:border-primary py-3 text-xl font-black tracking-tight focus:outline-none transition-all placeholder:opacity-5" />
               </div>
-              
+
               <div className="space-y-3">
                 <label className="text-[0.65rem] font-black text-muted-foreground/40 tracking-[0.2em] uppercase">头像链接 (URL)</label>
-                <input 
-                  name="avatar" 
-                  value={formData.avatar} 
-                  onChange={handleChange} 
-                  placeholder="HTTPS://CLOUDFRONT.NET/AVATAR.PNG"
-                  className="w-full bg-muted/20 border-b-2 border-border/50 focus:border-primary py-3 text-sm font-bold tracking-tight focus:outline-none transition-all placeholder:opacity-5"
-                />
+                <input name="avatar" value={formData.avatar} onChange={handleChange} placeholder="HTTPS://CLOUDFRONT.NET/AVATAR.PNG" className="w-full bg-muted/20 border-b-2 border-border/50 focus:border-primary py-3 text-sm font-bold tracking-tight focus:outline-none transition-all placeholder:opacity-5" />
               </div>
 
               <div className="space-y-3 md:col-span-2">
                 <label className="text-[0.65rem] font-black text-muted-foreground/40 tracking-[0.2em] uppercase">个人简介 / 签名</label>
-                <textarea 
-                  name="bio" 
-                  value={formData.bio} 
-                  onChange={handleChange} 
-                  placeholder="分享你数字足迹背后的哲学..."
-                  className="w-full bg-muted/20 border-2 border-border/50 rounded-[2rem] p-6 h-40 text-xs font-semibold leading-relaxed focus:outline-none focus:border-primary transition-all custom-scrollbar shadow-inner placeholder:opacity-10"
-                />
+                <textarea name="bio" value={formData.bio} onChange={handleChange} placeholder="分享你数字足迹背后的哲学..." className="w-full bg-muted/20 border-2 border-border/50 rounded-[2rem] p-6 h-40 text-xs font-semibold leading-relaxed focus:outline-none focus:border-primary transition-all custom-scrollbar shadow-inner placeholder:opacity-10" />
               </div>
             </div>
           </section>
 
-          {/* Social Block */}
           <section className="glass-card p-10 rounded-[3rem] space-y-10 border-border/20 shadow-xl">
             <div className="flex items-center gap-4 border-b border-border/30 pb-6">
               <div className="w-10 h-10 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-500">
@@ -190,36 +162,63 @@ export default function Settings() {
             </div>
 
             <div className="space-y-8 px-2">
-              {[
-                { name: 'github', label: 'GitHub 仓库', placeholder: 'GITHUB.COM/USERNAME', icon: <FaGithub size={18} /> },
-                { name: 'twitter', label: 'Twitter 节点', placeholder: 'TWITTER.COM/USERNAME', icon: <AtSign size={18} /> },
-                { name: 'linkedin', label: 'LinkedIn 链接', placeholder: 'LINKEDIN.COM/IN/USERNAME', icon: <LinkIcon size={18} /> }
-              ].map((social) => (
+              {SOCIAL_FIELDS.map((social) => (
                 <div key={social.name} className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-12 group">
                   <div className="w-40 shrink-0 flex items-center gap-3">
-                     <div className="text-muted-foreground/30 group-focus-within:text-indigo-500 transition-colors">
-                        {social.icon}
-                     </div>
-                     <label className="text-[0.6rem] font-black text-muted-foreground/40 tracking-[0.15em] uppercase">{social.label}</label>
+                    <div className="text-muted-foreground/30 group-focus-within:text-indigo-500 transition-colors">{social.icon}</div>
+                    <label className="text-[0.6rem] font-black text-muted-foreground/40 tracking-[0.15em] uppercase">{social.label}</label>
                   </div>
                   <div className="flex-1 w-full relative">
-                    <input 
-                      name={social.name} 
-                      value={formData[social.name]} 
-                      onChange={handleChange} 
-                      placeholder={social.placeholder}
-                      className="w-full bg-transparent border-b-2 border-border/30 py-3 text-xs font-bold tracking-[0.1em] focus:outline-none focus:border-indigo-500 transition-all placeholder:opacity-5 uppercase"
-                    />
+                    <input name={social.name} value={formData[social.name]} onChange={handleChange} placeholder={social.placeholder} className="w-full bg-transparent border-b-2 border-border/30 py-3 text-xs font-bold tracking-[0.1em] focus:outline-none focus:border-indigo-500 transition-all placeholder:opacity-5 uppercase" />
                     <div className="absolute right-0 top-1/2 -translate-y-1/2 opacity-0 group-focus-within:opacity-100 transition-all">
-                       <div className="w-2 h-2 rounded-full bg-indigo-500 shadow-glow shadow-indigo-500/50" />
+                      <div className="w-2 h-2 rounded-full bg-indigo-500 shadow-glow shadow-indigo-500/50" />
                     </div>
                   </div>
                 </div>
               ))}
             </div>
           </section>
-        </motion.div>
-      </div>
+        </MotionDiv>
+      </form>
     </div>
   );
+};
+
+/**
+ * 后台系统设置页面。
+ * @returns {JSX.Element} 返回身份信息与社交资料配置界面。
+ * @description 负责读取与更新站点公开展示的个人资料。
+ */
+export default function Settings() {
+  /**
+   * 当前管理员资料和读写动作。
+   * 业务含义：驱动设置页的初始化与保存。
+   */
+  const { profile, updateProfile, fetchProfile } = useBlog();
+
+  useEffect(() => {
+    fetchProfile();
+    // 这里保持首次进入时拉取一次资料，避免上下文函数引用变化导致重复请求。
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /**
+   * 处理设置页保存。
+   * @param {Record<string, any>} formData 当前设置表单数据。
+   * @returns {void} 无返回值。
+   */
+  const handleSubmit = (formData) => {
+    updateProfile({
+      name: formData.name,
+      bio: formData.bio,
+      avatar: formData.avatar,
+      socials: {
+        github: formData.github,
+        twitter: formData.twitter,
+        linkedin: formData.linkedin,
+      },
+    });
+  };
+
+  return <SettingsForm key={JSON.stringify(profile || {})} profile={profile} onSubmit={handleSubmit} />;
 }

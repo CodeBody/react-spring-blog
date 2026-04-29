@@ -1,23 +1,41 @@
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, m } from 'framer-motion';
 import { AlertTriangle, Trash2, X } from 'lucide-react';
 
-export default function ConfirmModal({ 
-  isOpen, 
-  onClose, 
-  onConfirm, 
-  title = "确定执行此操作吗？", 
+/**
+ * 动效容器组件。
+ * 取值范围：`framer-motion` 提供的 div 动效组件。
+ */
+const MotionDiv = m.div;
+
+/**
+ * 二次确认弹窗组件。
+ * @param {object} props 组件入参。
+ * @param {boolean} props.isOpen 是否展示弹窗。
+ * @param {() => void} props.onClose 关闭弹窗回调。
+ * @param {() => void} props.onConfirm 确认执行回调。
+ * @param {string} [props.title="确定执行此操作吗？"] 弹窗标题。
+ * @param {string} [props.message="此操作不可逆，请谨慎操作。"] 弹窗提示文案。
+ * @param {string} [props.confirmText="确认删除"] 确认按钮文案。
+ * @param {string} [props.cancelText="放弃业务"] 取消按钮文案。
+ * @param {string} [props.type="danger"] 弹窗类型，支持 `danger` 或默认提示风格。
+ * @returns {JSX.Element} 返回确认弹窗。
+ */
+export default function ConfirmModal({
+  isOpen,
+  onClose,
+  onConfirm,
+  title = '确定执行此操作吗？',
   message = "此操作不可逆，请谨慎操作。",
   confirmText = "确认删除",
   cancelText = "放弃业务",
-  type = "danger" 
+  type = 'danger',
 }) {
   return (
     <AnimatePresence>
       {isOpen && (
         <div key="confirm-modal-overlay" className="fixed inset-0 z-[9999] flex items-center justify-center p-6">
-          {/* Backdrop */}
-          <motion.div 
+          <MotionDiv
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -25,8 +43,7 @@ export default function ConfirmModal({
             className="absolute inset-0 bg-background/40 backdrop-blur-md"
           />
 
-          {/* Modal Container */}
-          <motion.div 
+          <MotionDiv
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -79,7 +96,7 @@ export default function ConfirmModal({
             >
               <X size={18} />
             </button>
-          </motion.div>
+          </MotionDiv>
         </div>
       )}
     </AnimatePresence>

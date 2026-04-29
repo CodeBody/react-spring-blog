@@ -1,29 +1,59 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useBlog } from '../../context/BlogContext';
 import { Mail } from 'lucide-react';
 import { FaGithub, FaTwitter, FaLinkedin } from 'react-icons/fa';
 import { Card, CardContent } from '../../components/common/Card';
 
+/**
+ * 核心技术标签集合。
+ * 业务含义：用于关于页展示当前主要技术栈。
+ */
+const CORE_TECH_STACK = ['React 18', 'Vite', 'Tailwind CSS v3', 'TypeScript', 'Next.js', 'Figma', 'Node.js', 'GraphQL'];
+
+/**
+ * 计算关于页标题中的简称。
+ * @param {Record<string, any>} profile 当前管理员资料对象。
+ * @returns {string} 返回标题使用的简称名称。
+ */
+const getShortName = (profile) => profile?.name?.split(' ')[0] || '夏天';
+
+/**
+ * 计算关于页简介文案。
+ * @param {Record<string, any>} profile 当前管理员资料对象。
+ * @returns {string} 返回用于展示的简介内容。
+ */
+const getProfileBio = (profile) => {
+  if (profile?.bio === 'Frontend Engineer & Design Enthusiast.') {
+    return '专注于前端开发、体验设计与现代 Web 架构。';
+  }
+
+  return profile?.bio || '专注于前端开发、体验设计与现代 Web 架构。';
+};
+
+/**
+ * 关于页面。
+ * @returns {JSX.Element} 返回个人介绍页面。
+ * @description 负责展示头像、简介、社交方式和技术栈。
+ */
 export default function About() {
+  /**
+   * 当前管理员资料对象。
+   * 业务含义：驱动头像、昵称、简介和社交链接展示。
+   */
   const { profile } = useBlog();
 
   return (
-
     <div className="max-w-3xl mx-auto px-6 lg:px-8 w-full pt-32 pb-12 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out">
       <div className="flex flex-col md:flex-row items-center gap-12 mb-16">
         <div className="w-48 h-48 md:w-56 md:h-56 rounded-full overflow-hidden border-4 border-border shrink-0 shadow-lg">
-          <img 
-            src={profile?.avatar || "/assets/images/avatar-default.svg"} 
-            alt={profile?.name}
-            className="w-full h-full object-cover bg-muted"
-          />
+          <img src={profile?.avatar || '/assets/images/avatar-default.svg'} alt={profile?.name} className="w-full h-full object-cover bg-muted" />
         </div>
         <div className="text-center md:text-left">
           <h1 className="font-display font-[800] text-[clamp(2.5rem,5vw,4rem)] tracking-[-0.02em] leading-tight mb-4">
-            你好，我是 <span className="gradient-text pb-2">{profile?.name?.split(' ')[0] || '夏天'}</span>.
+            你好，我是 <span className="gradient-text pb-2">{getShortName(profile)}</span>
           </h1>
           <p className="text-xl text-muted-foreground max-w-xl leading-relaxed">
-            {profile?.bio || '专注于前端开发、UX 设计和现代 Web 架构。'}
+            {getProfileBio(profile)}
           </p>
           <div className="flex items-center justify-center md:justify-start gap-4 mt-8">
             {profile?.socials?.github && (
@@ -51,8 +81,8 @@ export default function About() {
       <div className="space-y-12">
         <section>
           <h2 className="font-display text-3xl font-bold tracking-tight mb-6 flex items-center gap-3">
-             <span className="bg-glass border border-border text-foreground w-10 h-10 rounded-lg flex items-center justify-center text-xl shadow-sm">🚀</span>
-             我的工作
+            <span className="bg-glass border border-border text-foreground w-10 h-10 rounded-lg flex items-center justify-center text-xl shadow-sm">🚀</span>
+            我的工作
           </h2>
           <Card className="border-border bg-glass backdrop-blur-md shadow-sm hover:border-border-hover transition-colors rounded-2xl">
             <CardContent className="p-8 prose prose-lg dark:prose-invert max-w-none text-muted-foreground">
@@ -67,12 +97,12 @@ export default function About() {
         </section>
 
         <section>
-           <h2 className="font-display text-3xl font-bold tracking-tight mb-6 flex items-center gap-3">
-             <span className="bg-glass border border-border text-foreground w-10 h-10 rounded-lg flex items-center justify-center text-xl shadow-sm">🛠️</span>
-             核心技术
+          <h2 className="font-display text-3xl font-bold tracking-tight mb-6 flex items-center gap-3">
+            <span className="bg-glass border border-border text-foreground w-10 h-10 rounded-lg flex items-center justify-center text-xl shadow-sm">🛠️</span>
+            核心技术
           </h2>
           <div className="flex flex-wrap gap-3">
-            {['React 18', 'Vite', 'Tailwind CSS v3', 'TypeScript', 'Next.js', 'Figma', 'Node.js', 'GraphQL'].map(tech => (
+            {CORE_TECH_STACK.map((tech) => (
               <span key={tech} className="px-4 py-2 border border-border bg-card rounded-full text-sm font-medium hover:bg-background-secondary hover:border-foreground transition-colors cursor-default">
                 {tech}
               </span>
