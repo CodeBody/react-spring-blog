@@ -1,37 +1,16 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Suspense, lazy } from 'react';
+import { lazy, Suspense } from 'react';
 
 // Layouts (Static)
 import FrontendLayout from '../components/front/FrontendLayout';
 import AdminLayout from '../components/admin/AdminLayout';
-
-/**
- * 前台首页页面组件，按需加载以降低首屏体积。
- * 取值范围：React Lazy 组件。
- */
-const Home = lazy(() => import('../pages/front/Home'));
-/**
- * 文章详情页面组件，按需加载以降低首屏体积。
- * 取值范围：React Lazy 组件。
- */
-const ArticleDetail = lazy(() => import('../pages/front/ArticleDetail'));
-/**
- * 关于页组件，按需加载以降低首屏体积。
- * 取值范围：React Lazy 组件。
- */
-const About = lazy(() => import('../pages/front/About'));
-/**
- * 项目页组件，按需加载以降低首屏体积。
- * 取值范围：React Lazy 组件。
- */
-const Projects = lazy(() => import('../pages/front/Projects'));
-/**
- * 联系页组件，按需加载以降低首屏体积。
- * 取值范围：React Lazy 组件。
- */
-const Contact = lazy(() => import('../pages/front/Contact'));
+import Home from '../pages/front/Home';
+import ArticleDetail from '../pages/front/ArticleDetail';
+import About from '../pages/front/About';
+import Projects from '../pages/front/Projects';
+import Contact from '../pages/front/Contact';
 /**
  * 后台登录页组件，按需加载以降低首屏体积。
  * 取值范围：React Lazy 组件。
@@ -133,13 +112,13 @@ export const router = createBrowserRouter([
     path: '/',
     element: <FrontendLayout />,
     children: [
-      { index: true, element: <LazyLoad><Home /></LazyLoad> },
-      { path: 'articles', element: <LazyLoad><Home /></LazyLoad> },
-      { path: 'category/:categoryId', element: <LazyLoad><Home /></LazyLoad> },
-      { path: 'article/:id', element: <LazyLoad><ArticleDetail /></LazyLoad> },
-      { path: 'about', element: <LazyLoad><About /></LazyLoad> },
-      { path: 'projects', element: <LazyLoad><Projects /></LazyLoad> },
-      { path: 'contact', element: <LazyLoad><Contact /></LazyLoad> },
+      { index: true, element: <Home /> },
+      { path: 'articles', element: <Home /> },
+      { path: 'category/:categoryId', element: <Home /> },
+      { path: 'article/:id', element: <ArticleDetail /> },
+      { path: 'about', element: <About /> },
+      { path: 'projects', element: <Projects /> },
+      { path: 'contact', element: <Contact /> },
     ],
   },
   {

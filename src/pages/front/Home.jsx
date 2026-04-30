@@ -108,6 +108,13 @@ const buildDisplayedArticles = (articles, categories) => articles.map((article) 
 const buildRouteKey = (pathname, categoryId) => `${pathname}:${categoryId || ''}`;
 
 /**
+ * 构建文章列表页重置后的分页状态。
+ * @param {Record<string, number>} previousPageState 旧分页状态对象。
+ * @returns {Record<string, number>} 返回重置后的分页状态对象。
+ */
+const buildResetArticlesPageState = (previousPageState) => ({ ...previousPageState, '/articles:': 1 });
+
+/**
  * 查询当前分类名称。
  * @param {any[]} categories 分类数组。
  * @param {string | undefined} categoryId 当前分类 ID。
@@ -327,8 +334,16 @@ export default function Home() {
    * @returns {void} 无返回值。
    */
   const navigateToArticles = () => {
-    setPageState((previousPageState) => ({ ...previousPageState, '/articles:': 1 }));
+    setPageState(buildResetArticlesPageState);
     navigate('/articles');
+  };
+
+  /**
+   * 重置文章列表页的分页状态。
+   * @returns {void} 无返回值。
+   */
+  const resetArticlesPageState = () => {
+    setPageState(buildResetArticlesPageState);
   };
 
   /**
@@ -368,7 +383,7 @@ export default function Home() {
     <div className="w-full">
       {!isAllArticles && !isCategoryFilter && (
         <section className="min-h-screen flex flex-col justify-center relative pt-20 pb-16 overflow-hidden">
-          <div className="absolute top-0 right-0 w-full lg:w-3/5 h-full z-0 select-none pointer-events-none mix-blend-multiply opacity-80 dark:opacity-30 overflow-hidden">
+          <div className="absolute top-0 right-0 w-full lg:w-3/5 h-full z-0 select-none pointer-events-none mix-blend-multiply opacity-80 dark:mix-blend-normal dark:opacity-60 overflow-hidden">
             <MotionImg
               initial={{ scale: 1.5, filter: 'blur(10px)' }}
               animate={{ scale: 1, filter: 'blur(0px)' }}
@@ -381,7 +396,7 @@ export default function Home() {
                 maskImage: 'linear-gradient(to left, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 100%)',
               }}
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-background via-background/94 to-background/28 dark:from-background/96 dark:via-background/72 dark:to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-background via-background/94 to-background/28 dark:from-background/92 dark:via-background/48 dark:to-transparent" />
           </div>
 
           <div className="max-w-6xl mx-auto px-6 lg:px-8 w-full relative z-10 flex flex-col items-start">
@@ -441,7 +456,7 @@ export default function Home() {
             )}
 
             {!(isAllArticles || isCategoryFilter) ? (
-              <Link to="/articles" onClick={navigateToArticles} className="text-muted-foreground font-sans font-medium hover:text-foreground transition-colors whitespace-nowrap mb-1 tracking-widest text-sm relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1px] after:bg-foreground hover:after:w-full after:transition-all after:duration-300">
+              <Link to="/articles" onClick={resetArticlesPageState} className="text-muted-foreground font-sans font-medium hover:text-foreground transition-colors whitespace-nowrap mb-1 tracking-widest text-sm relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1px] after:bg-foreground hover:after:w-full after:transition-all after:duration-300">
                 浏览全部专栏 →
               </Link>
             ) : (

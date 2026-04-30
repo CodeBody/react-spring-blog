@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useBlog } from '../../context/BlogContext';
 import { Mail, Send, CheckCircle2 } from 'lucide-react';
-import { FaGithub as Github, FaTwitter as Twitter, FaLinkedin as Linkedin } from 'react-icons/fa';
+import SocialLinks from '../../components/front/SocialLinks';
 
 /**
  * 联系页表单状态集合。
@@ -70,26 +70,7 @@ export default function Contact() {
 
           <div className="space-y-6">
             <h3 className="text-lg font-semibold tracking-tight uppercase text-muted-foreground">在社交媒体上找到我</h3>
-            <div className="flex flex-col sm:flex-row flex-wrap gap-4">
-              {profile?.socials?.github && (
-                <a href={profile.socials.github} target="_blank" rel="noreferrer" className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-card border border-border/50 hover:border-brand-primary hover:text-brand-primary transition-all duration-300 hover:-translate-y-1 hover:shadow-glow group">
-                  <Github size={20} className="group-hover:scale-110 transition-transform" />
-                  <span className="font-medium">GitHub</span>
-                </a>
-              )}
-              {profile?.socials?.twitter && (
-                <a href={profile.socials.twitter} target="_blank" rel="noreferrer" className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-card border border-border/50 hover:border-[#1DA1F2] hover:text-[#1DA1F2] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(29,161,242,0.2)] group">
-                  <Twitter size={20} className="group-hover:scale-110 transition-transform" />
-                  <span className="font-medium">Twitter</span>
-                </a>
-              )}
-              {profile?.socials?.linkedin && (
-                <a href={profile.socials.linkedin} target="_blank" rel="noreferrer" className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-card border border-border/50 hover:border-[#0A66C2] hover:text-[#0A66C2] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(10,102,194,0.2)] group">
-                  <Linkedin size={20} className="group-hover:scale-110 transition-transform" />
-                  <span className="font-medium">LinkedIn</span>
-                </a>
-              )}
-            </div>
+            <SocialLinks profile={profile} variant="pill" />
 
             <div className="pt-6 flex items-center gap-4 text-muted-foreground">
               <Mail size={20} />

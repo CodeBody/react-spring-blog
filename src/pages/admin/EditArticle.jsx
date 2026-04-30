@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useSyncExternalStore } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useBlog } from '../../context/BlogContext';
 import { ArrowLeft, Command, Eye, Image as ImageIcon, Save, Zap } from 'lucide-react';
-import MDEditor from '@uiw/react-md-editor';
+import { MarkdownEditor } from '../../components/common/MarkdownEditor';
 
 /**
  * 文章表单默认值。
@@ -28,33 +28,6 @@ const buildArticleFormData = (article) => ({
   status: article?.status || 'published',
   content: article?.content || '',
 });
-
-/**
- * 订阅根节点主题变化。
- * @param {() => void} callback 主题变化回调。
- * @returns {() => void} 返回取消订阅函数。
- */
-const subscribeThemeChange = (callback) => {
-  /**
-   * 根节点主题 class 监听器。
-   * 业务含义：同步 Markdown 编辑器的亮暗模式。
-   */
-  const observer = new MutationObserver(callback);
-  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-  return () => observer.disconnect();
-};
-
-/**
- * 获取当前编辑器主题模式。
- * @returns {'light'|'dark'} 返回编辑器主题模式。
- */
-const getEditorColorMode = () => (document.documentElement.classList.contains('dark') ? 'dark' : 'light');
-
-/**
- * 读取编辑器主题模式。
- * @returns {'light'|'dark'} 返回与页面主题同步的编辑器模式。
- */
-const useEditorColorMode = () => useSyncExternalStore(subscribeThemeChange, getEditorColorMode, () => 'light');
 
 /**
  * 将标签名称数组转换为标签 ID 数组。
@@ -88,11 +61,6 @@ const LoadingView = () => (
  * @returns {JSX.Element} 返回文章表单界面。
  */
 const ArticleEditorForm = ({ isNew, id, article, categories, allTags, onSubmit }) => {
-  /**
-   * 当前 Markdown 编辑器主题模式。
-   * 取值范围：`light` 或 `dark`。
-   */
-  const editorColorMode = useEditorColorMode();
   /**
    * 当前表单数据。
    * 取值范围：文章表单字段对象。
@@ -216,7 +184,13 @@ const ArticleEditorForm = ({ isNew, id, article, categories, allTags, onSubmit }
               <div className="flex items-center gap-2 text-[0.6rem] font-bold text-muted-foreground/40 uppercase tracking-widest bg-muted/20 px-3 py-1.5 rounded-lg border border-border/50">Markdown Support</div>
             </div>
             <div className="flex-1 px-4 py-2">
-              <MDEditor value={formData.content} onChange={handleContentChange} height={750} preview="edit" data-color-mode={editorColorMode} className="!bg-transparent !border-none !shadow-none h-full" visibleDragbar={false} />
+              <MarkdownEditor
+                value={formData.content}
+                onChange={handleContentChange}
+                minHeight={750}
+                defaultView="edit"
+                className="h-full"
+              />
             </div>
             <div className="px-10 py-6 text-center border-t border-border/20 bg-muted/5 text-muted-foreground/20 text-[0.6rem] font-bold tracking-[0.4em] uppercase">Focus Mode · Active</div>
           </section>

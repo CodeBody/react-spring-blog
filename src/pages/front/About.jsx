@@ -1,8 +1,7 @@
 import React from 'react';
 import { useBlog } from '../../context/BlogContext';
-import { Mail } from 'lucide-react';
-import { FaGithub, FaTwitter, FaLinkedin } from 'react-icons/fa';
 import { Card, CardContent } from '../../components/common/Card';
+import SocialLinks from '../../components/front/SocialLinks';
 
 /**
  * 核心技术标签集合。
@@ -55,26 +54,7 @@ export default function About() {
           <p className="text-xl text-muted-foreground max-w-xl leading-relaxed">
             {getProfileBio(profile)}
           </p>
-          <div className="flex items-center justify-center md:justify-start gap-4 mt-8">
-            {profile?.socials?.github && (
-              <a href={profile.socials.github} target="_blank" rel="noreferrer" className="p-3 bg-muted rounded-full hover:bg-primary hover:text-primary-foreground transition-all">
-                <FaGithub size={20} />
-              </a>
-            )}
-            {profile?.socials?.twitter && (
-              <a href={profile.socials.twitter} target="_blank" rel="noreferrer" className="p-3 bg-muted rounded-full hover:bg-primary hover:text-primary-foreground transition-all">
-                <FaTwitter size={20} />
-              </a>
-            )}
-            {profile?.socials?.linkedin && (
-              <a href={profile.socials.linkedin} target="_blank" rel="noreferrer" className="p-3 bg-muted rounded-full hover:bg-[#0A66C2] hover:text-white transition-all">
-                <FaLinkedin size={20} />
-              </a>
-            )}
-            <a href="mailto:hello@example.com" className="p-3 bg-muted rounded-full hover:bg-red-500 hover:text-white transition-all">
-              <Mail size={20} />
-            </a>
-          </div>
+          <SocialLinks profile={profile} includeEmail className="justify-center md:justify-start mt-8" />
         </div>
       </div>
 

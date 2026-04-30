@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { Menu, X, Moon, Sun } from 'lucide-react';
-import { FaGithub, FaTwitter, FaLinkedin } from 'react-icons/fa';
 import { useBlog } from '../../context/BlogContext';
 import Toast from '../common/Toast';
+import SocialLinks from './SocialLinks';
 
 /**
  * 前台导航链接集合。
@@ -158,16 +158,16 @@ const Header = ({ currentPath }) => {
                 {link.name}
               </Link>
             ))}
-            <button onClick={toggleTheme} className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-foreground hover:bg-background-secondary transition-all">
+            <button aria-label={darkMode ? '切换到浅色主题' : '切换到深色主题'} onClick={toggleTheme} className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-foreground hover:bg-background-secondary transition-all">
               {darkMode ? <Sun size={18} /> : <Moon size={18} />}
             </button>
           </nav>
 
           <div className="flex items-center md:hidden gap-4">
-            <button onClick={toggleTheme} className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-foreground hover:bg-background-secondary transition-all">
+            <button aria-label={darkMode ? '切换到浅色主题' : '切换到深色主题'} onClick={toggleTheme} className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-foreground hover:bg-background-secondary transition-all">
               {darkMode ? <Sun size={18} /> : <Moon size={18} />}
             </button>
-            <button onClick={toggleMenu} className="text-muted-foreground hover:text-foreground p-2">
+            <button aria-label={isOpen ? '关闭导航菜单' : '打开导航菜单'} onClick={toggleMenu} className="text-muted-foreground hover:text-foreground p-2">
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
@@ -222,26 +222,7 @@ const Footer = () => {
               用心设计并建造。
             </p>
           </div>
-          <div className="flex space-x-6">
-            {profile?.socials?.github && (
-              <a href={profile.socials.github} target="_blank" rel="noreferrer" className="text-muted-foreground hover:-translate-y-1 hover:text-foreground transition-all duration-300">
-                <span className="sr-only">GitHub</span>
-                <FaGithub size={24} />
-              </a>
-            )}
-            {profile?.socials?.twitter && (
-              <a href={profile.socials.twitter} target="_blank" rel="noreferrer" className="text-muted-foreground hover:-translate-y-1 hover:text-foreground transition-all duration-300">
-                <span className="sr-only">Twitter</span>
-                <FaTwitter size={24} />
-              </a>
-            )}
-            {profile?.socials?.linkedin && (
-              <a href={profile.socials.linkedin} target="_blank" rel="noreferrer" className="text-muted-foreground hover:-translate-y-1 hover:text-foreground transition-all duration-300">
-                <span className="sr-only">LinkedIn</span>
-                <FaLinkedin size={24} />
-              </a>
-            )}
-          </div>
+          <SocialLinks profile={profile} variant="footer" className="gap-6" />
         </div>
         <div className="border-t border-border pt-8 text-center text-[0.9rem] text-muted-foreground">
           <p>&copy; {currentYear} {getCopyrightName(profile)}. 保留所有权利。</p>

@@ -3,8 +3,8 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useBlog } from '../../context/BlogContext';
 import { ArrowLeft, Globe, Hash, Palette, Save, Type } from 'lucide-react';
 import { FaGithub as Github } from 'react-icons/fa';
-import MDEditor from '@uiw/react-md-editor';
 import { fetchAdminProjectById } from '../../utils/api';
+import { MarkdownEditor } from '../../components/common/MarkdownEditor';
 
 /**
  * 项目表单默认值。
@@ -31,12 +31,6 @@ const COLOR_PRESETS = [
   { name: '赛博霓虹', value: 'from-pink-500/20 to-cyan-500/20' },
   { name: '极简灰调', value: 'from-gray-500/20 to-slate-500/20' },
 ];
-
-/**
- * 读取编辑器当前主题模式。
- * @returns {'light'|'dark'} 返回 Markdown 编辑器主题模式。
- */
-const getEditorColorMode = () => (document.documentElement.classList.contains('dark') ? 'dark' : 'light');
 
 /**
  * 根据项目详情构建表单对象。
@@ -204,8 +198,13 @@ export default function EditProject() {
               </div>
               <label className="text-sm font-bold uppercase tracking-widest text-foreground/60">项目深度描述 (Markdown)</label>
             </div>
-            <div data-color-mode={getEditorColorMode()} className="rounded-2xl overflow-hidden border border-border/50">
-              <MDEditor value={formData.description} onChange={handleDescriptionChange} height={550} preview="edit" className="!bg-transparent !border-none !shadow-none" />
+            <div className="rounded-2xl overflow-hidden border border-border/50 p-4">
+              <MarkdownEditor
+                value={formData.description}
+                onChange={handleDescriptionChange}
+                minHeight={550}
+                defaultView="edit"
+              />
             </div>
           </section>
         </div>

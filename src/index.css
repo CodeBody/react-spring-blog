@@ -152,3 +152,6 @@
   @apply rounded-2xl p-8 bg-zinc-950 border border-white/10 shadow-2xl my-10;
 }
 
+.prose .article-code-block pre {
+  @apply my-0 rounded-none border-0 bg-transparent p-5 shadow-none;
+}

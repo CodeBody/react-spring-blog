@@ -225,6 +225,15 @@ const extractPlainMarkdownText = (content) => (content || '')
 const getReadMinutes = (content) => Math.max(1, Math.ceil(extractPlainMarkdownText(content).length / READING_CHARACTERS_PER_MINUTE));
 
 /**
+ * 将文章详情页滚动到顶部。
+ * @returns {void} 无返回值。
+ * @description 用于切换上一篇、下一篇或相关文章后重置阅读起点。
+ */
+const scrollPageToTop = () => {
+  window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+};
+
+/**
  * 读取代码块语言标识。
  * @param {string | undefined} className 代码节点类名。
  * @returns {string} 返回代码块语言名称。
@@ -300,7 +309,7 @@ const MarkdownCode = ({ inline, className, children, copiedCodeId, onCopyCode })
   const isCopied = copiedCodeId === codeId;
 
   return (
-    <div className="not-prose my-8 overflow-hidden rounded-[1.75rem] border border-white/10 bg-zinc-950 shadow-2xl">
+    <div className="article-code-block not-prose my-8 overflow-hidden rounded-[1.75rem] border border-white/10 bg-zinc-950 shadow-2xl">
       <CodeBlockToolbar language={codeLanguage} isCopied={isCopied} onCopy={() => onCopyCode(codeId, codeText)} />
       <pre className="overflow-x-auto p-5 text-sm leading-7 text-zinc-100">
         <code className={className}>{codeText}</code>
@@ -308,6 +317,14 @@ const MarkdownCode = ({ inline, className, children, copiedCodeId, onCopyCode })
     </div>
   );
 };
+
+/**
+ * Markdown 预格式化容器组件。
+ * @param {{children: React.ReactNode}} props 组件入参。
+ * @returns {JSX.Element} 返回代码块内部节点本身。
+ * @description 用于移除 ReactMarkdown 默认包裹的外层 `pre`，避免出现双层代码块外壳。
+ */
+const MarkdownPre = ({ children }) => <>{children}</>;
 
 /**
  * 文章详情骨架屏组件。
@@ -382,6 +399,10 @@ export default function ArticleDetail() {
    * 业务含义：用于返回按钮恢复用户入口上下文。
    */
   const sourcePath = location.state?.sourcePath;
+
+  useEffect(() => {
+    scrollPageToTop();
+  }, [id]);
 
   useEffect(() => {
     /**
@@ -466,6 +487,7 @@ export default function ArticleDetail() {
    * 业务含义：扩展代码块复制能力。
    */
   const markdownComponents = {
+    pre: MarkdownPre,
     code: (props) => <MarkdownCode {...props} copiedCodeId={copiedCodeId} onCopyCode={handleCopyCode} />,
   };
 
