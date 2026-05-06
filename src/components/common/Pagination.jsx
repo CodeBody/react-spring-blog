@@ -54,50 +54,52 @@ export function Pagination({ currentPage, totalPages, onPageChange }) {
   const pages = buildPages(currentPage, totalPages);
 
   return (
-    <div className="flex items-center justify-center gap-2 mt-16 pb-8">
-      <button
-        onClick={() => onPageChange(currentPage - 1)}
-        disabled={currentPage === 1}
-        className="flex items-center justify-center w-10 h-10 rounded-xl border border-border bg-background text-muted-foreground hover:text-foreground hover:bg-muted/50 hover:border-border-hover disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-        aria-label="Previous page"
-      >
-        <ChevronLeft size={18} />
-      </button>
+    <div className="mt-16 overflow-x-auto no-scrollbar px-1 pb-8">
+      <div className="flex min-w-max items-center justify-center gap-2">
+        <button
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="flex items-center justify-center w-10 h-10 rounded-xl border border-border bg-background text-muted-foreground hover:text-foreground hover:bg-muted/50 hover:border-border-hover disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          aria-label="Previous page"
+        >
+          <ChevronLeft size={18} />
+        </button>
 
-      <div className="flex items-center gap-1 sm:gap-2">
-        {pages.map((page, index) => {
-          if (page === '...') {
+        <div className="flex items-center gap-1 sm:gap-2">
+          {pages.map((page, index) => {
+            if (page === '...') {
+              return (
+                <div key={`ellipsis-${index}`} className="flex items-center justify-center w-8 h-10 text-muted-foreground">
+                  <MoreHorizontal size={16} />
+                </div>
+              );
+            }
+
             return (
-              <div key={`ellipsis-${index}`} className="flex items-center justify-center w-8 h-10 text-muted-foreground">
-                <MoreHorizontal size={16} />
-              </div>
+              <button
+                key={page}
+                onClick={() => onPageChange(page)}
+                className={`flex items-center justify-center w-10 h-10 rounded-xl font-medium transition-all duration-300 ${
+                  currentPage === page
+                    ? 'bg-brand-primary text-white shadow-glow border-transparent'
+                    : 'border border-transparent hover:bg-muted/50 hover:border-border text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {page}
+              </button>
             );
-          }
+          })}
+        </div>
 
-          return (
-            <button
-              key={page}
-              onClick={() => onPageChange(page)}
-              className={`flex items-center justify-center w-10 h-10 rounded-xl font-medium transition-all duration-300 ${
-                currentPage === page
-                  ? 'bg-brand-primary text-white shadow-glow border-transparent'
-                  : 'border border-transparent hover:bg-muted/50 hover:border-border text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              {page}
-            </button>
-          );
-        })}
+        <button
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="flex items-center justify-center w-10 h-10 rounded-xl border border-border bg-background text-muted-foreground hover:text-foreground hover:bg-muted/50 hover:border-border-hover disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          aria-label="Next page"
+        >
+          <ChevronRight size={18} />
+        </button>
       </div>
-
-      <button
-        onClick={() => onPageChange(currentPage + 1)}
-        disabled={currentPage === totalPages}
-        className="flex items-center justify-center w-10 h-10 rounded-xl border border-border bg-background text-muted-foreground hover:text-foreground hover:bg-muted/50 hover:border-border-hover disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-        aria-label="Next page"
-      >
-        <ChevronRight size={18} />
-      </button>
     </div>
   );
 }

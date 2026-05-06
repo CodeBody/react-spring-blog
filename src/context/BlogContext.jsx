@@ -224,14 +224,15 @@ export const BlogProvider = ({ children }) => {
    * @param {number} [size=50] 每页条数。
    * @param {string | number | null} [catId=null] 分类 ID。
    * @param {string} [keyword=''] 搜索关键词。
+   * @param {'asc' | 'desc'} [sortOrder='desc'] 创建时间排序方向。
    * @returns {Promise<void>} 无显式返回值。
    */
-  const fetchArticlesData = async (page = 1, size = 50, catId = null, keyword = '') => withLoading(async () => {
+  const fetchArticlesData = async (page = 1, size = 50, catId = null, keyword = '', sortOrder = 'desc') => withLoading(async () => {
     /**
      * 当前文章分页结果。
      * 取值范围：包含 `records` 和 `total` 的分页对象。
      */
-    const data = await fetchArticles(page, size, catId, keyword);
+    const data = await fetchArticles(page, size, catId, keyword, sortOrder);
     setArticles(data.records || []);
     setTotalArticles(data.total || 0);
   });

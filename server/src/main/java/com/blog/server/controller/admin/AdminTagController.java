@@ -53,6 +53,10 @@ public class AdminTagController {
      */
     @PostMapping
     public Result<Void> create(@RequestBody Tag tag) {
+        Result<Void> validationResult = validateAndNormalizeTag(tag);
+        if (validationResult != null) {
+            return validationResult;
+        }
         fillTagTimestamps(tag, true);
         tagService.save(tag);
         return Result.success();
@@ -66,6 +70,10 @@ public class AdminTagController {
      */
     @PutMapping("/{id}")
     public Result<Void> update(@PathVariable Long id, @RequestBody Tag tag) {
+        Result<Void> validationResult = validateAndNormalizeTag(tag);
+        if (validationResult != null) {
+            return validationResult;
+        }
         tag.setId(id);
         fillTagTimestamps(tag, false);
         tagService.updateById(tag);
@@ -102,11 +110,37 @@ public class AdminTagController {
      * @return 无返回值。
      */
     private void fillTagTimestamps(Tag tag, boolean isCreate) {
+        /**
+         * 当前写操作时间。
+         * 业务含义：统一作为标签更新时间，创建场景下同时写入创建时间。
+         */
         Date now = new Date();
         tag.setUpdatedAt(now);
 
         if (isCreate) {
             tag.setCreatedAt(now);
         }
+    }
+
+    /**
+     * 校验并标准化标签名称。
+     * @param tag 标签对象，允许为空。
+     * @return 校验失败时返回失败响应；成功时返回 `null`。
+     */
+    private Result<Void> validateAndNormalizeTag(Tag tag) {
+        if (tag == null) {
+            return Result.fail("标签数据不能为空。");
+        }
+        tag.setName(normalizeTagName(tag.getName()));
+        return tag.getName().isEmpty() ? Result.fail("标签名称不能为空。") : null;
+    }
+
+    /**
+     * 标准化标签名称文本。
+     * @param tagName 原始标签名称，允许为空。
+     * @return 返回去除首尾空白后的标签名称；空值时返回空字符串。
+     */
+    private String normalizeTagName(String tagName) {
+        return tagName == null ? "" : tagName.trim();
     }
 }

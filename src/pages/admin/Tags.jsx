@@ -31,11 +31,18 @@ const createEmptyModal = () => ({ isOpen: false, title: '', message: '', onConfi
 const filterTags = (tags, search) => (tags || []).filter((tag) => tag.name?.toLowerCase().includes(search.toLowerCase()));
 
 /**
- * 将标签输入标准化为 kebab-case 风格。
+ * 清洗标签名称输入。
  * @param {string} value 原始输入值。
- * @returns {string} 返回替换空格后的标签名称。
+ * @returns {string} 返回移除开头空白后的标签名称。
  */
-const normalizeTagName = (value) => value.replace(/\s/g, '-');
+const sanitizeTagNameInput = (value) => value.replace(/^\s+/, '');
+
+/**
+ * 生成提交到接口的标签载荷。
+ * @param {{name: string}} formData 标签表单数据。
+ * @returns {{name: string}} 返回清理后的标签对象。
+ */
+const buildTagPayload = (formData) => ({ name: formData.name.trim() });
 
 /**
  * 后台标签管理页面。
@@ -102,13 +109,18 @@ export default function Tags() {
    */
   const handleSubmit = async (event) => {
     event.preventDefault();
+    /**
+     * 当前提交的标签载荷。
+     * 业务含义：统一去除首尾空白后再写入接口。
+     */
+    const tagPayload = buildTagPayload(formData);
 
-    if (!formData.name.trim()) {
+    if (!tagPayload.name) {
       showToast('标签名称不能为空', 'warning');
       return;
     }
 
-    const result = editingId ? await updateTag({ ...formData, id: editingId }) : await addTag(formData);
+    const result = editingId ? await updateTag({ ...tagPayload, id: editingId }) : await addTag(tagPayload);
 
     if (result.code === 200) {
       showToast(editingId ? '标签已重命名' : '新标签已创建', 'success');
@@ -193,11 +205,11 @@ export default function Tags() {
                 <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
                   <TagIcon size={18} />
                 </div>
-                <label className="text-[0.65rem] font-black uppercase tracking-[0.2em] text-foreground/50">标签标识符 (Kebab-case)</label>
+                <label className="text-[0.65rem] font-black uppercase tracking-[0.2em] text-foreground/50">标签名称</label>
               </div>
               <div className="relative">
                 <span className="absolute left-6 top-1/2 -translate-y-1/2 text-primary font-black text-3xl opacity-20 select-none">#</span>
-                <input autoFocus required value={formData.name} onChange={(event) => setFormData({ name: normalizeTagName(event.target.value) })} placeholder="例如: react-hooks, design-system..." className="w-full bg-muted/10 border border-transparent focus:border-primary/20 focus:bg-card rounded-2xl pl-14 pr-6 py-5 text-2xl font-display font-black text-foreground transition-all focus:outline-none placeholder:text-muted-foreground/20" />
+                <input autoFocus required value={formData.name} onChange={(event) => setFormData({ name: sanitizeTagNameInput(event.target.value) })} placeholder="例如: 前端工程化, 人工智能, 生活随笔..." className="w-full bg-muted/10 border border-transparent focus:border-primary/20 focus:bg-card rounded-2xl pl-14 pr-6 py-5 text-2xl font-display font-black text-foreground transition-all focus:outline-none placeholder:text-muted-foreground/20" />
               </div>
 
               <div className="flex gap-4 p-4 rounded-2xl bg-primary/5 border border-primary/10 items-start">
@@ -205,7 +217,7 @@ export default function Tags() {
                   <Hash size={10} strokeWidth={3} />
                 </div>
                 <p className="text-[0.6rem] font-medium text-primary/60 leading-relaxed italic">
-                  提示：标签建议使用小写字母和连字符，这有助于在 URL 检索和自动化处理中保持最佳兼容性。
+                  提示：标签名称支持中文，将按你输入的内容保存；系统仅会自动清理首尾空白字符。
                 </p>
               </div>
             </section>

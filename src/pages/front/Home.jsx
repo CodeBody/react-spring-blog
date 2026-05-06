@@ -4,7 +4,7 @@ import { AnimatePresence, m } from 'framer-motion';
 import { useBlog } from '../../context/BlogContext';
 import { formatDate } from '../../utils';
 import { Pagination } from '../../components/common/Pagination';
-import { Search, FileText } from 'lucide-react';
+import { Search, FileText, ArrowUpNarrowWide, ArrowDownWideNarrow } from 'lucide-react';
 
 /**
  * 动效版块容器组件。
@@ -41,6 +41,37 @@ const MotionSection = m.section;
  * 业务含义：用于文章分页请求和分页器计算。
  */
 const ITEMS_PER_PAGE = 9;
+/**
+ * 移动端分类列表首行默认展示数量。
+ * 业务含义：避免窄屏首行按钮过多导致布局被挤压。
+ */
+const MOBILE_CATEGORY_COLLAPSE_LIMIT = 2;
+/**
+ * 平板端分类列表首行默认展示数量。
+ * 业务含义：在中等宽度屏幕下保留更多分类入口。
+ */
+const TABLET_CATEGORY_COLLAPSE_LIMIT = 4;
+
+/**
+ * 文章列表默认排序方向。
+ * 业务含义：与当前接口默认按创建时间倒序保持一致。
+ */
+const DEFAULT_ARTICLE_SORT_ORDER = 'desc';
+
+/**
+ * 文章排序方向对应的界面文案映射。
+ * 业务含义：用于排序按钮展示当前排序状态。
+ */
+const ARTICLE_SORT_TEXT = {
+  asc: '创建时间升序',
+  desc: '创建时间倒序',
+};
+
+/**
+ * 读取当前可用的视口宽度。
+ * @returns {number} 返回当前窗口宽度；非浏览器环境时返回桌面兜底值。
+ */
+const getViewportWidth = () => (typeof window === 'undefined' ? 1280 : window.innerWidth);
 
 /**
  * 首页标题容器的子元素交错动效。
@@ -146,6 +177,91 @@ const getArticlesTitle = (isCategoryFilter, isAllArticles, categories, categoryI
 const buildArticleSourcePath = (pathname) => pathname;
 
 /**
+ * 计算文章列表下一次排序方向。
+ * @param {'asc' | 'desc'} sortOrder 当前排序方向。
+ * @returns {'asc' | 'desc'} 返回切换后的排序方向。
+ */
+const getNextArticleSortOrder = (sortOrder) => (sortOrder === 'asc' ? 'desc' : 'asc');
+
+/**
+ * 获取排序按钮展示文案。
+ * @param {'asc' | 'desc'} sortOrder 当前排序方向。
+ * @returns {string} 返回排序按钮文案。
+ */
+const getArticleSortText = (sortOrder) => ARTICLE_SORT_TEXT[sortOrder] || ARTICLE_SORT_TEXT[DEFAULT_ARTICLE_SORT_ORDER];
+
+/**
+ * 获取排序按钮图标组件。
+ * @param {'asc' | 'desc'} sortOrder 当前排序方向。
+ * @returns {JSX.Element} 返回排序图标节点。
+ */
+const getArticleSortIcon = (sortOrder) => (sortOrder === 'asc'
+  ? <ArrowUpNarrowWide className="h-4 w-4" />
+  : <ArrowDownWideNarrow className="h-4 w-4" />);
+
+/**
+ * 计算当前屏幕宽度下分类首行可展示数量。
+ * @param {number} viewportWidth 当前视口宽度。
+ * @returns {number} 返回首行展示数量；桌面端返回 `Infinity` 表示全部展示。
+ */
+const getCategoryCollapseLimit = (viewportWidth) => {
+  if (viewportWidth < 640) {
+    return MOBILE_CATEGORY_COLLAPSE_LIMIT;
+  }
+
+  if (viewportWidth < 1024) {
+    return TABLET_CATEGORY_COLLAPSE_LIMIT;
+  }
+
+  return Number.POSITIVE_INFINITY;
+};
+
+/**
+ * 判断分类按钮是否处于激活状态。
+ * @param {Record<string, any>} category 分类对象。
+ * @param {string | undefined} categoryId 当前路由分类 ID。
+ * @returns {boolean} 命中当前分类时返回 `true`。
+ */
+const isActiveCategory = (category, categoryId) => String(categoryId) === String(category.id);
+
+/**
+ * 构建首行需要展示的分类集合。
+ * @param {any[]} categories 全量分类数组。
+ * @param {string | undefined} categoryId 当前路由分类 ID。
+ * @param {number} collapseLimit 首行展示数量上限。
+ * @returns {any[]} 返回首行分类数组。
+ */
+const buildVisibleCategories = (categories, categoryId, collapseLimit) => {
+  if (categories.length <= collapseLimit) {
+    return categories;
+  }
+
+  const activeCategory = categories.find((category) => isActiveCategory(category, categoryId));
+  const baseCategories = categories.slice(0, collapseLimit);
+
+  if (!activeCategory || baseCategories.some((category) => category.id === activeCategory.id)) {
+    return baseCategories;
+  }
+
+  return [...baseCategories.slice(0, collapseLimit - 1), activeCategory];
+};
+
+/**
+ * 构建展开面板中的补充分组集合。
+ * @param {any[]} categories 全量分类数组。
+ * @param {any[]} visibleCategories 首行已展示分类数组。
+ * @returns {any[]} 返回展开区分类数组。
+ */
+const buildExpandedCategories = (categories, visibleCategories) => {
+  /**
+   * 首行分类主键集合。
+   * 取值范围：分类主键字符串数组。
+   */
+  const visibleCategoryIds = visibleCategories.map((category) => String(category.id));
+  return categories.filter((category) => !visibleCategoryIds.includes(String(category.id)));
+};
+
+/**
  * 首页文章卡片组件。
  * @param {{article: Record<string, any>, index: number, sourcePath: string}} props 组件入参。
  * @param {Record<string, any>} props.article 单篇文章对象。
@@ -228,6 +344,21 @@ export default function Home() {
    */
   const [searchQuery, setSearchQuery] = useState('');
   /**
+   * 当前文章列表排序方向。
+   * 取值范围：`asc` 表示创建时间升序，`desc` 表示创建时间倒序。
+   */
+  const [sortOrder, setSortOrder] = useState(DEFAULT_ARTICLE_SORT_ORDER);
+  /**
+   * 当前分类展开面板是否处于展开状态。
+   * 取值范围：`true` 表示显示补充分类按钮，`false` 表示折叠。
+   */
+  const [isCategoryListExpanded, setIsCategoryListExpanded] = useState(false);
+  /**
+   * 当前页面视口宽度。
+   * 取值范围：大于 0 的窗口像素宽度。
+   */
+  const [viewportWidth, setViewportWidth] = useState(getViewportWidth);
+  /**
    * 各路由分页状态缓存。
    * 业务含义：为不同路径保存各自的当前页码。
    */
@@ -257,6 +388,30 @@ export default function Home() {
    * 业务含义：在原始文章对象上补充分组名称。
    */
   const displayedArticles = buildDisplayedArticles(articles, categories);
+  /**
+   * 当前分类首行展示数量上限。
+   * 业务含义：决定是否需要“更多”按钮以及首行显示哪些分类。
+   */
+  const categoryCollapseLimit = getCategoryCollapseLimit(viewportWidth);
+  /**
+   * 当前分类是否需要折叠展示。
+   * 取值范围：`true` 表示首行显示部分分类，`false` 表示全部显示。
+   */
+  const shouldCollapseCategories = categoryCollapseLimit !== Number.POSITIVE_INFINITY && categories.length > categoryCollapseLimit;
+  /**
+   * 当前首行展示的分类数组。
+   * 业务含义：保证激活分类在折叠状态下仍然可见。
+   */
+  const visibleCategories = shouldCollapseCategories
+    ? buildVisibleCategories(categories, categoryId, categoryCollapseLimit)
+    : categories;
+  /**
+   * 当前展开面板需要补充展示的分类数组。
+   * 业务含义：点击“更多”后展示首行之外的剩余分类。
+   */
+  const expandedCategories = shouldCollapseCategories
+    ? buildExpandedCategories(categories, visibleCategories)
+    : [];
 
   useEffect(() => {
     /**
@@ -269,14 +424,31 @@ export default function Home() {
         return;
       }
 
-      fetchArticles(currentPage, ITEMS_PER_PAGE, categoryId, searchQuery);
+      fetchArticles(currentPage, ITEMS_PER_PAGE, categoryId, searchQuery, sortOrder);
     }, 300);
 
     fetchCategories();
     return () => clearTimeout(timer);
     // 这里保持原有请求节奏，避免上下文函数引用变化导致重复触发。
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [categoryId, currentPage, isAllArticles, isCategoryFilter, location.pathname, searchQuery]);
+  }, [categoryId, currentPage, isAllArticles, isCategoryFilter, location.pathname, searchQuery, sortOrder]);
+
+  useEffect(() => {
+    /**
+     * 视口变化监听函数。
+     * 业务含义：在屏幕尺寸变化时重算分类折叠数量。
+     */
+    const handleResize = () => {
+      setViewportWidth(getViewportWidth());
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    setIsCategoryListExpanded(false);
+  }, [categoryId, isAllArticles, isCategoryFilter]);
 
   /**
    * 更新当前路由对应的页码。
@@ -335,6 +507,7 @@ export default function Home() {
    */
   const navigateToArticles = () => {
     setPageState(buildResetArticlesPageState);
+    setIsCategoryListExpanded(false);
     navigate('/articles');
   };
 
@@ -355,6 +528,7 @@ export default function Home() {
     const nextPath = `/category/${nextCategoryId}`;
     const nextKey = buildRouteKey(nextPath, String(nextCategoryId));
     setPageState((previousPageState) => ({ ...previousPageState, [nextKey]: 1 }));
+    setIsCategoryListExpanded(false);
     navigate(nextPath);
   };
 
@@ -366,6 +540,24 @@ export default function Home() {
   const handlePageChange = (page) => {
     updateCurrentPage(page);
     scrollToTop();
+  };
+
+  /**
+   * 处理文章排序切换。
+   * @returns {void} 无返回值。
+   */
+  const handleSortToggle = () => {
+    setSortOrder((previousSortOrder) => getNextArticleSortOrder(previousSortOrder));
+    updateCurrentPage(1);
+    scrollToTop();
+  };
+
+  /**
+   * 切换分类补充面板的展开状态。
+   * @returns {void} 无返回值。
+   */
+  const toggleCategoryListExpanded = () => {
+    setIsCategoryListExpanded((previousExpanded) => !previousExpanded);
   };
 
   /**
@@ -441,7 +633,7 @@ export default function Home() {
             {getArticlesTitle(isCategoryFilter, isAllArticles, categories, categoryId)}
           </h2>
 
-          <div className="flex items-center gap-4 w-full sm:w-auto">
+          <div className="flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center">
             {(isAllArticles || isCategoryFilter) && (
               <div className="relative flex-1 sm:w-72">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -456,11 +648,11 @@ export default function Home() {
             )}
 
             {!(isAllArticles || isCategoryFilter) ? (
-              <Link to="/articles" onClick={resetArticlesPageState} className="text-muted-foreground font-sans font-medium hover:text-foreground transition-colors whitespace-nowrap mb-1 tracking-widest text-sm relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1px] after:bg-foreground hover:after:w-full after:transition-all after:duration-300">
+              <Link to="/articles" onClick={resetArticlesPageState} className="self-start text-muted-foreground font-sans font-medium hover:text-foreground transition-colors whitespace-nowrap mb-1 tracking-widest text-sm relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1px] after:bg-foreground hover:after:w-full after:transition-all after:duration-300">
                 浏览全部专栏 →
               </Link>
             ) : (
-              <Link to="/" className="text-muted-foreground font-sans font-medium hover:text-foreground transition-colors whitespace-nowrap mb-1 tracking-widest text-sm relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1px] after:bg-foreground hover:after:w-full after:transition-all after:duration-300">
+              <Link to="/" className="self-start text-muted-foreground font-sans font-medium hover:text-foreground transition-colors whitespace-nowrap mb-1 tracking-widest text-sm relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1px] after:bg-foreground hover:after:w-full after:transition-all after:duration-300">
                 ← 返回首页
               </Link>
             )}
@@ -468,24 +660,61 @@ export default function Home() {
         </MotionDiv>
 
         {(isAllArticles || isCategoryFilter) && (
-          <div className="mb-12 overflow-x-auto no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
-            <div className="flex items-center gap-3 min-w-max">
+          <div className="mb-12">
+            <div className="flex items-start gap-3">
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-3 overflow-hidden">
+                  <button
+                    onClick={navigateToArticles}
+                    className={`shrink-0 whitespace-nowrap px-6 py-2 border rounded-none text-xs font-bold tracking-[0.2em] uppercase transition-all duration-300 ${!categoryId ? 'bg-foreground text-background border-foreground shadow-[4px_4px_0_rgba(0,0,0,0.1)]' : 'bg-transparent text-muted-foreground border-border hover:border-foreground hover:text-foreground'}`}
+                  >
+                    全部 <span className="ml-2 opacity-40 font-mono italic">{categories.reduce((accumulator, category) => accumulator + (category.articleCount || 0), 0)}</span>
+                  </button>
+                  {visibleCategories.map((category) => (
+                    <button
+                      key={category.id}
+                      onClick={() => navigateToCategory(category.id)}
+                      className={`shrink-0 whitespace-nowrap px-6 py-2 border rounded-none text-xs font-bold tracking-[0.2em] uppercase transition-all duration-300 ${String(categoryId) === String(category.id) ? 'bg-brand-primary text-white border-brand-primary shadow-[4px_4px_0_rgba(var(--brand-primary-rgb),0.2)]' : 'bg-transparent text-muted-foreground border-border hover:border-brand-primary hover:text-brand-primary'}`}
+                    >
+                      {category.name} <span className="ml-2 opacity-40 font-mono italic">{category.articleCount || 0}</span>
+                    </button>
+                  ))}
+                  {shouldCollapseCategories && (
+                    <button
+                      type="button"
+                      onClick={toggleCategoryListExpanded}
+                      className="shrink-0 whitespace-nowrap px-4 py-2 border border-dashed border-border text-xs font-bold tracking-[0.2em] uppercase text-muted-foreground transition-all duration-300 hover:border-foreground hover:text-foreground"
+                    >
+                      {isCategoryListExpanded ? '收起' : '更多'}
+                    </button>
+                  )}
+                </div>
+              </div>
+
               <button
-                onClick={navigateToArticles}
-                className={`px-6 py-2 border rounded-none text-xs font-bold tracking-[0.2em] uppercase transition-all duration-300 ${!categoryId ? 'bg-foreground text-background border-foreground shadow-[4px_4px_0_rgba(0,0,0,0.1)]' : 'bg-transparent text-muted-foreground border-border hover:border-foreground hover:text-foreground'}`}
+                type="button"
+                onClick={handleSortToggle}
+                aria-label={getArticleSortText(sortOrder)}
+                title={getArticleSortText(sortOrder)}
+                className="inline-flex h-10 w-10 shrink-0 items-center justify-center self-start border border-border text-muted-foreground transition-all duration-300 hover:border-foreground hover:text-foreground"
               >
-                全部 <span className="ml-2 opacity-40 font-mono italic">{categories.reduce((accumulator, category) => accumulator + (category.articleCount || 0), 0)}</span>
+                {getArticleSortIcon(sortOrder)}
               </button>
-              {categories.map((category) => (
-                <button
-                  key={category.id}
-                  onClick={() => navigateToCategory(category.id)}
-                  className={`px-6 py-2 border rounded-none text-xs font-bold tracking-[0.2em] uppercase transition-all duration-300 ${String(categoryId) === String(category.id) ? 'bg-brand-primary text-white border-brand-primary shadow-[4px_4px_0_rgba(var(--brand-primary-rgb),0.2)]' : 'bg-transparent text-muted-foreground border-border hover:border-brand-primary hover:text-brand-primary'}`}
-                >
-                  {category.name} <span className="ml-2 opacity-40 font-mono italic">{category.articleCount || 0}</span>
-                </button>
-              ))}
             </div>
+
+            {shouldCollapseCategories && isCategoryListExpanded && (
+              <div className="mt-4 flex flex-wrap gap-3">
+                {expandedCategories.map((category) => (
+                  <button
+                    key={category.id}
+                    onClick={() => navigateToCategory(category.id)}
+                    className={`whitespace-nowrap px-6 py-2 border rounded-none text-xs font-bold tracking-[0.2em] uppercase transition-all duration-300 ${String(categoryId) === String(category.id) ? 'bg-brand-primary text-white border-brand-primary shadow-[4px_4px_0_rgba(var(--brand-primary-rgb),0.2)]' : 'bg-transparent text-muted-foreground border-border hover:border-brand-primary hover:text-brand-primary'}`}
+                  >
+                    {category.name} <span className="ml-2 opacity-40 font-mono italic">{category.articleCount || 0}</span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

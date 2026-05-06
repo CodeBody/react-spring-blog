@@ -247,9 +247,10 @@ const buildAdminArticleUrl = (page, size, categoryId) => {
  * @param {number} size 每页条数。
  * @param {string | number | null} categoryId 分类 ID。
  * @param {string} keyword 关键词。
+ * @param {'asc' | 'desc'} sortOrder 创建时间排序方向。
  * @returns {string} 返回拼装完成的请求地址。
  */
-const buildArticleUrl = (page, size, categoryId, keyword) => {
+const buildArticleUrl = (page, size, categoryId, keyword, sortOrder) => {
   /**
    * 前台文章分页基础地址。
    * 取值范围：固定包含 page 和 size 参数。
@@ -257,7 +258,8 @@ const buildArticleUrl = (page, size, categoryId, keyword) => {
   let url = `/api/articles?page=${page}&size=${size}`;
 
   url = appendQueryParam(url, 'categoryId', categoryId);
-  return appendQueryParam(url, 'keyword', keyword);
+  url = appendQueryParam(url, 'keyword', keyword);
+  return appendQueryParam(url, 'sortOrder', sortOrder);
 };
 
 /**
@@ -301,14 +303,15 @@ export const fetchAdminArticles = async (page = 1, size = 10, categoryId = null)
  * @param {number} [size=50] 每页条数。
  * @param {string | number | null} [categoryId=null] 分类 ID。
  * @param {string} [keyword=''] 搜索关键词。
+ * @param {'asc' | 'desc'} [sortOrder='desc'] 创建时间排序方向。
  * @returns {Promise<{records: any[], total: number}>} 返回适配后的文章分页结果。
  */
-export const fetchArticles = async (page = 1, size = 50, categoryId = null, keyword = '') => {
+export const fetchArticles = async (page = 1, size = 50, categoryId = null, keyword = '', sortOrder = 'desc') => {
   /**
    * 当前文章列表请求地址。
    * 取值范围：前台文章分页 URL。
    */
-  const url = buildArticleUrl(page, size, categoryId, keyword);
+  const url = buildArticleUrl(page, size, categoryId, keyword, sortOrder);
 
   return requestPublicData(url, EMPTY_PAGE_RESULT, (data) => buildPageResult(data, adaptArticle));
 };
